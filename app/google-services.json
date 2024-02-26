@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "400158346507",
+    "firebase_url": "https://rent-housing-management-system-default-rtdb.firebaseio.com",
+    "project_id": "rent-housing-management-system",
+    "storage_bucket": "rent-housing-management-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400158346507:android:1ddd5ef9abd9783f58260e",
+        "android_client_info": {
+          "package_name": "com.example.rentalhousingmanagementsystem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG_zw_vmxy08LUmbFVJA2MSpmkwYly17c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
