@@ -16,16 +16,21 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 
 public class TenantsCrud extends DbConn{
-    Task<QuerySnapshot> tenants;
+
     private final String collectionName = "Tenants";
     private Context context;
     private final String [] fields = {"first_name", "last_name", "national_ID", "email", "contact", "emergency_contact", "status", "created_at", "created_by", "updated_at", "updated_by"};
     public void RegisterTenant(HashMap data){
-        db.collection(collectionName).add(data);
+        db.collection(collectionName).add(data).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                Toast.makeText(context, collectionName + " registered successfully", Toast.LENGTH_LONG).show();
+            }
+        });
     }
     public HashMap AllTenants(){
         HashMap data = new HashMap();
-        tenants = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Task<QuerySnapshot> tenants = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
