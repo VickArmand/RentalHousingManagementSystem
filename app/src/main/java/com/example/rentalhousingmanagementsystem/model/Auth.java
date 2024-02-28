@@ -17,33 +17,32 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.HashMap;
-import java.util.concurrent.Executor;
-
 public class Auth {
-    private FirebaseAuth mAuth;
+    private final FirebaseAuth mAuth;
     protected FirebaseUser currentUser;
-    private Context context;
-    public Auth()
+    private final Context context;
+    public Auth(Context context)
     {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        this.context = context;
     }
 
     public void Login(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(context,"Login success", Toast.LENGTH_SHORT);
+                            Log.v("AuthLogin", "signInWithCredential:success");
+                            Toast.makeText(context,"Login success", Toast.LENGTH_SHORT).show();
                             currentUser = mAuth.getCurrentUser();
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.d(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(context,"Incorrect Email Address or Password", Toast.LENGTH_SHORT);
+                            Log.v("AuthLogin", "signInWithCredential:failure" + task.getException());
+                            Toast.makeText(context,"Incorrect Email Address or Password", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -84,7 +83,7 @@ public class Auth {
         String email = (String) data.get("email");
         String password = (String) data.get("password");
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {

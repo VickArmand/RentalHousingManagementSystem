@@ -1,14 +1,17 @@
 package com.example.rentalhousingmanagementsystem;
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.ui.AppBarConfiguration;
-import com.example.rentalhousingmanagementsystem.controller.AuthController;
+
 import com.example.rentalhousingmanagementsystem.databinding.ActivityMainBinding;
+import com.example.rentalhousingmanagementsystem.model.Auth;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -32,12 +35,17 @@ public class MainActivity extends AppCompatActivity {
                 String email, password;
                 email = emailTextView.getText().toString();
                 password = passwordTextView.getText().toString();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AuthController().LoginController(email, password);
-                    }
-                });
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password))
+                    Toast.makeText(getApplicationContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                else {
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new Auth(getApplicationContext()).Login(email, password);
+                        }
+                    });
+                    t.start();
+                }
             }
         });
     }
