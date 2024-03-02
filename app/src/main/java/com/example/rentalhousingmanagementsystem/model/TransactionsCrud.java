@@ -15,12 +15,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TransactionsCrud extends DbConn{
     private final String collectionName = "Transactions";
     private final String [] fields = {"room_id", "credit", "debit", "tenant_id", "payment_mode", "evidence", "status", "created_at", "created_by", "updated_at", "updated_by"};
     private Context context;
-    public void RegisterTransaction(HashMap data){
+    private final String [] status = {"Fully Paid", "Partially Paid", "Not Paid"};
+    public TransactionsCrud (Context context)
+    {
+        this.context = context;
+    }
+
+    public void RegisterTransaction(HashMap<String, String> data){
         db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -33,23 +40,24 @@ public class TransactionsCrud extends DbConn{
             }
         });
     }
-    public HashMap AllTransactions(){
-        HashMap data = new HashMap();
+    public HashMap<String, DocumentSnapshot> AllTransactions(String tenantID){
+        HashMap<String, DocumentSnapshot> data = new HashMap<String, DocumentSnapshot>();
         Task<QuerySnapshot> transactions = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        data.put(document.getId(), document.getData());
+                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                        if (document.get("tenant_id") == tenantID)
+                            data.put(document.getId(), document);
                     }
                 }
             }
         });
         return data;
     }
-    public HashMap GetTransaction(String documentID)
+    public HashMap<String, Object> GetTransaction(String documentID)
     {
-        HashMap data = new HashMap();
+        HashMap<String, Object> data = new HashMap<>();
         DocumentReference transaction = db.collection(collectionName).document(documentID);
         transaction.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -67,10 +75,10 @@ public class TransactionsCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateTransaction(HashMap data, String documentID)
+    public void UpdateTransaction(HashMap<String, String> data, String documentID)
     {
         DocumentReference transaction = db.collection(collectionName).document(documentID);
-        if (transaction != null) {
+        if (transaction.get().getResult().exists()) {
             for (String f : fields) {
                 if (data.get(f) != null)
                     transaction.update(f, data.get(f));
