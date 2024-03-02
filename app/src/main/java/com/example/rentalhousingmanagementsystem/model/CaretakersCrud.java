@@ -18,38 +18,48 @@ import java.util.HashMap;
 
 public class CaretakersCrud extends DbConn{
     private final String collectionName = "Caretakers";
-    private Context context;
+    private final Context context;
     private final String [] fields = {"first_name", "last_name", "national_ID", "email", "contact", "emergency_contact", "status", "created_at", "created_by", "updated_at", "updated_by"};
-    public void RegisterCaretaker(HashMap data){
-        db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(context, collectionName + " registered successfully", Toast.LENGTH_LONG).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,  "Error registering " + collectionName, Toast.LENGTH_LONG).show();
-            }
-        });
+    private final String [] uniqueFields = {"first_name", "last_name", "national_ID", "email", "contact"};
+    private final String [] status = {"Active", "Inactive"};
+    public CaretakersCrud(Context context)
+    {
+        this.context = context;
     }
-    public HashMap AllCaretakers(){
-        HashMap data = new HashMap();
+    public void RegisterCaretaker(HashMap<String, String> data){
+        if (CaretakerExists(data))
+            Toast.makeText(context, "Caretaker Exists", Toast.LENGTH_SHORT).show();
+        else {
+            db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    Toast.makeText(context, collectionName + " registered successfully", Toast.LENGTH_LONG).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(context,  "Error registering " + collectionName, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+    public HashMap<String, DocumentSnapshot> AllCaretakers(){
+        HashMap<String, DocumentSnapshot> data = new HashMap<String, DocumentSnapshot>();
         Task<QuerySnapshot> caretakers = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        data.put(document.getId(), document.getData());
+                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                        data.put(document.getId(), document);
                     }
                 }
             }
         });
         return data;
     }
-    public HashMap GetCaretaker(String documentID)
+    public HashMap<String, Object> GetCaretaker(String documentID)
     {
-        HashMap data = new HashMap();
+        HashMap<String, Object> data = new HashMap<>();
         DocumentReference caretaker = db.collection(collectionName).document(documentID);
         caretaker.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -67,10 +77,33 @@ public class CaretakersCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateCaretaker(HashMap data, String documentID)
+    public Boolean CaretakerExists (HashMap<String, String> data){
+        final boolean[] recordExists = {false};
+        Task<QuerySnapshot> caretakers = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (recordExists[0])
+                            break;
+                        else {
+                            if (document.get(uniqueFields[0]) == data.get(uniqueFields[0]) && document.get(uniqueFields[1]) == data.get(uniqueFields[1]))
+                                recordExists[0] = true;
+                            for (int i = 2; i < uniqueFields.length; i++) {
+                                if (document.get(uniqueFields[i]) == data.get(uniqueFields[i]))
+                                    recordExists[0] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        return recordExists[0];
+    }
+    public void UpdateCaretaker(HashMap<String, String> data, String documentID)
     {
         DocumentReference caretaker = db.collection(collectionName).document(documentID);
-        if (caretaker != null) {
+        if (caretaker.get().getResult().exists()) {
             for (String f : fields) {
                 if (data.get(f) != null)
                     caretaker.update(f, data.get(f));

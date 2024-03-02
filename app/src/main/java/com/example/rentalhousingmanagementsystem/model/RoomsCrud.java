@@ -11,46 +11,55 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
 
 public class RoomsCrud extends DbConn{
-    private final String [] fields = {"name", "cost", "description", "status", "tenant_id", "rental_id", "created_at", "created_by", "updated_at", "updated_by"};
+    private final String [] fields = {"name", "cost", "description", "max_tenants", "status", "rental_id", "created_at", "created_by", "updated_at", "updated_by"};
+    private final String [] uniqueFields = {"name", "rental_id"};
     private final String collectionName = "Rooms";
-    private Context context;
-    public void RegisterRoom(HashMap data){
-        db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(context, collectionName + " registered successfully", Toast.LENGTH_LONG).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,  "Error registering " + collectionName, Toast.LENGTH_LONG).show();
-            }
-        });
+    private final Context context;
+    private final String [] status = {"Occupied", "Vacant"};
+    public RoomsCrud (Context context)
+    {
+        this.context = context;
     }
-    public HashMap AllRooms(){
-        HashMap data = new HashMap();
-        Task<QuerySnapshot> rooms = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    public void RegisterRoom(HashMap<String, String>  data){
+        // Status must be Open
+        if (RoomExists(data))
+            Toast.makeText(context.getApplicationContext(), "Room Exists", Toast.LENGTH_SHORT).show();
+        else {
+            db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    Toast.makeText(context, collectionName + " registered successfully", Toast.LENGTH_LONG).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(context,  "Error registering " + collectionName, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+    public HashMap<String, DocumentSnapshot> AllRooms(String Rental_id){
+        HashMap<String, DocumentSnapshot> data = new HashMap<>();
+        Task<QuerySnapshot> rooms = db.collection(collectionName).whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        data.put(document.getId(), document.getData());
+                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                        data.put(document.getId(), document);
                     }
                 }
             }
         });
         return data;
     }
-    public HashMap GetRoom(String documentID)
+    public HashMap<String, Object> GetRoom(String documentID)
     {
-        HashMap data = new HashMap();
+        HashMap<String, Object> data = new HashMap<String, Object>();
         DocumentReference room = db.collection(collectionName).document(documentID);
         room.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -68,10 +77,22 @@ public class RoomsCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateRoom(HashMap data, String documentID)
+    public Boolean RoomExists (HashMap<String, String> data){
+        final boolean[] recordExists = {false};
+        HashMap<String, DocumentSnapshot> rooms = AllRooms(data.get(uniqueFields[1]));
+        for (DocumentSnapshot room: rooms.values())
+        {
+            if (recordExists[0])
+                break;
+            if (room.get(uniqueFields[0]) == data.get(uniqueFields[0]))
+                recordExists[0] = true;
+        }
+        return recordExists[0];
+    }
+    public void UpdateRoom(HashMap<String, String> data, String documentID)
     {
         DocumentReference room = db.collection(collectionName).document(documentID);
-        if (room != null) {
+        if (room.get().getResult().exists()) {
             for (String f : fields) {
                 if (data.get(f) != null)
                     room.update(f, data.get(f));
@@ -81,8 +102,9 @@ public class RoomsCrud extends DbConn{
     }
     public void DeleteRoom(String documentID)
     {
+        // Status must be Vacant
         DocumentReference room = db.collection(collectionName).document(documentID);
-        room.update("status", "Vacant").addOnSuccessListener(new OnSuccessListener<Void>() {
+        room.update("status", status[1]).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void avoid) {
                 Toast.makeText(context, collectionName + " deleted successfully", Toast.LENGTH_LONG).show();

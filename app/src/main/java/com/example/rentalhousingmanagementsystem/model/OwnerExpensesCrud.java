@@ -15,12 +15,18 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class OwnerExpensesCrud extends DbConn{
     private final String collectionName = "OwnersRentalExpenses";
     private final String [] fields = {"category", "description", "frequency", "amount", "deadline", "created_at", "created_by", "updated_at", "updated_by"};
     private Context context;
-    public void RegisterOwnerExpense(HashMap data){
+    public OwnerExpensesCrud (Context context)
+    {
+        this.context = context;
+    }
+
+    public void RegisterOwnerExpense(HashMap<String, String> data){
         db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -33,23 +39,23 @@ public class OwnerExpensesCrud extends DbConn{
             }
         });
     }
-    public HashMap AllOwnerExpenses(){
-        HashMap data = new HashMap();
+    public HashMap<String, DocumentSnapshot> AllOwnerExpenses(){
+        HashMap<String, DocumentSnapshot> data = new HashMap<String, DocumentSnapshot>();
         Task<QuerySnapshot> ownerExpenses = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        data.put(document.getId(), document.getData());
+                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                        data.put(document.getId(), document);
                     }
                 }
             }
         });
         return data;
     }
-    public HashMap GetOwnerExpense(String documentID)
+    public HashMap<String, Object> GetOwnerExpense(String documentID)
     {
-        HashMap data = new HashMap();
+        HashMap<String, Object> data = new HashMap<>();
         DocumentReference ownerExpense = db.collection(collectionName).document(documentID);
         ownerExpense.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -67,10 +73,10 @@ public class OwnerExpensesCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateOwnerExpense(HashMap data, String documentID)
+    public void UpdateOwnerExpense(HashMap<String, String> data, String documentID)
     {
         DocumentReference ownerExpense = db.collection(collectionName).document(documentID);
-        if (ownerExpense != null) {
+        if (ownerExpense.get().getResult().exists()) {
             for (String f : fields) {
                 if (data.get(f) != null)
                     ownerExpense.update(f, data.get(f));
