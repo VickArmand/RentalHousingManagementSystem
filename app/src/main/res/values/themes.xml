@@ -6,4 +6,12 @@
     </style>
 
     <style name="Theme.RentalHousingManagementSystem" parent="Base.Theme.RentalHousingManagementSystem" />
+    <style name="Theme.RentalHousingManagementSystem.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.RentalHousingManagementSystem.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.RentalHousingManagementSystem.PopupOverlay"
+        parent="ThemeOverlay.AppCompat.Light" />
 </resources>
