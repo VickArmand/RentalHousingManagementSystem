@@ -1,7 +1,10 @@
 package com.example.rentalhousingmanagementsystem;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 
 import com.example.rentalhousingmanagementsystem.databinding.ActivityMainBinding;
 import com.example.rentalhousingmanagementsystem.model.Auth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -20,10 +24,16 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private EditText emailTextView, passwordTextView;
     private Button btnLogin;
+    FirebaseUser currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Auth authObj = new Auth(getApplicationContext());
+        currentUser = Auth.getCurrentUser();
+        if (currentUser != null)
+        {
+            exit(getApplicationContext(), com.example.rentalhousingmanagementsystem.rentals.class);
+        }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         btnLogin = findViewById(R.id.btnlogin);
@@ -41,12 +51,21 @@ public class MainActivity extends AppCompatActivity {
                     Thread t = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            new Auth(getApplicationContext()).Login(email, password);
+                            currentUser = authObj.Login(email, password);
+                            if (currentUser != null) {
+                                exit(getApplicationContext(), rentals.class);
+                            }
                         }
                     });
                     t.start();
                 }
             }
         });
+    }
+    public void exit(Context context, Class cls)
+    {
+        Intent intent = new Intent(context, cls);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

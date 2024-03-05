@@ -3,23 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_all_rentals">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.example.rentalhousingmanagementsystem.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/nav_all_rentals"
+        android:name="com.example.rentalhousingmanagementsystem.ui.rentals.AllRentalsFragment"
+        android:label="@string/all_rentals"
+        tools:layout="@layout/fragment_allrentals" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.rentalhousingmanagementsystem.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.rentalhousingmanagementsystem.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_new_rental"
+        android:name="com.example.rentalhousingmanagementsystem.ui.rentals.NewRentalFragment"
+        android:label="@string/menu_new_rental"
+        tools:layout="@layout/fragment_newrental" />
 </navigation>

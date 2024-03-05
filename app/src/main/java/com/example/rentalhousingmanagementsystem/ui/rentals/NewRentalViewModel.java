@@ -1,16 +1,16 @@
-package com.example.rentalhousingmanagementsystem.ui.slideshow;
+package com.example.rentalhousingmanagementsystem.ui.rentals;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SlideshowViewModel extends ViewModel {
+public class NewRentalViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public SlideshowViewModel() {
+    public NewRentalViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("This is gallery fragment");
     }
 
     public LiveData<String> getText() {

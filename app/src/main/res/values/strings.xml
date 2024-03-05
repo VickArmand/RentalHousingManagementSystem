@@ -52,14 +52,17 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="title_activity_rentals">rentals</string>
+    <string name="title_activity_rentals">Rentals</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="all_rentals">Rentals</string>
+    <string name="menu_new_rental">Add New Rental</string>
+    <string name="logout">Logout</string>
+    <string name="rental_name">Rental Name</string>
+    <string name="number_of_rooms">Number of Rooms</string>
+    <string name="shalom_house">Shalom House</string>
+    <string name="_10">10</string>
 </resources>

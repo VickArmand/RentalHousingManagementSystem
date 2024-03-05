@@ -1,9 +1,12 @@
 package com.example.rentalhousingmanagementsystem;
 
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.Menu;
-import com.google.android.material.snackbar.Snackbar;
+import android.widget.Toast;
+
+import com.example.rentalhousingmanagementsystem.model.Auth;
 import com.google.android.material.navigation.NavigationView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -26,19 +29,12 @@ private ActivityRentalsBinding binding;
      setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarRentals.toolbar);
-        binding.appBarRentals.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_new_rental, R.id.nav_all_rentals)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_rentals);
@@ -58,5 +54,18 @@ private ActivityRentalsBinding binding;
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_rentals);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_rentals);
+        if (item.getItemId() == R.id.action_logout) {
+            Toast.makeText(getApplicationContext(),"Logout Success", Toast.LENGTH_SHORT).show();
+            new Auth(getApplicationContext()).Logout();
+            Log.v("logout", "success");
+            new MainActivity().exit(getApplicationContext(), MainActivity.class);
+        }
+//        NavigationUI.onNavDestinationSelected(item, navController) ||
+        return super.onOptionsItemSelected(item);
     }
 }
