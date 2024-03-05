@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,15 +47,13 @@ public class RentalsCrud extends DbConn{
             });
         }
     }
-    public HashMap<String, DocumentSnapshot> AllRentals(){
-        HashMap<String, DocumentSnapshot> data = new HashMap<>();
+    public ArrayList<DocumentSnapshot> AllRentals(){
+        ArrayList<DocumentSnapshot> data = new ArrayList<>();
         Task<QuerySnapshot> rentals = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                        data.put(document.getId(), document);
-                    }
+                    data.addAll(task.getResult().getDocuments());
                 }
             }
         });

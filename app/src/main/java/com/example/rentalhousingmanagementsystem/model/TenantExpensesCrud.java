@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,15 +40,13 @@ public class TenantExpensesCrud extends DbConn{
             }
         });
     }
-    public HashMap<String, DocumentSnapshot> AllTenantExpenses(){
-        HashMap<String, DocumentSnapshot> data = new HashMap<>();
+    public ArrayList<DocumentSnapshot> AllTenantExpenses(){
+        ArrayList<DocumentSnapshot> data = new ArrayList<DocumentSnapshot>();
         Task<QuerySnapshot> tenantExpenses = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                        data.put(document.getId(), document);
-                    }
+                    data.addAll(task.getResult().getDocuments());
                 }
             }
         });

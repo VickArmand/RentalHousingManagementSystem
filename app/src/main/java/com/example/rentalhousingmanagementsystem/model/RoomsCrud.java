@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RoomsCrud extends DbConn{
@@ -43,15 +44,13 @@ public class RoomsCrud extends DbConn{
             });
         }
     }
-    public HashMap<String, DocumentSnapshot> AllRooms(String Rental_id){
-        HashMap<String, DocumentSnapshot> data = new HashMap<>();
+    public ArrayList<DocumentSnapshot> AllRooms(String Rental_id){
+        ArrayList<DocumentSnapshot> data = new ArrayList<>();
         Task<QuerySnapshot> rooms = db.collection(collectionName).whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                        data.put(document.getId(), document);
-                    }
+                    data.addAll(task.getResult().getDocuments());
                 }
             }
         });
@@ -79,8 +78,8 @@ public class RoomsCrud extends DbConn{
     }
     public Boolean RoomExists (HashMap<String, String> data){
         final boolean[] recordExists = {false};
-        HashMap<String, DocumentSnapshot> rooms = AllRooms(data.get(uniqueFields[1]));
-        for (DocumentSnapshot room: rooms.values())
+        ArrayList<DocumentSnapshot> rooms = AllRooms(data.get(uniqueFields[1]));
+        for (DocumentSnapshot room: rooms)
         {
             if (recordExists[0])
                 break;

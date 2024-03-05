@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CaretakersCrud extends DbConn{
@@ -43,15 +44,13 @@ public class CaretakersCrud extends DbConn{
             });
         }
     }
-    public HashMap<String, DocumentSnapshot> AllCaretakers(String Rental_id){
-        HashMap<String, DocumentSnapshot> data = new HashMap<String, DocumentSnapshot>();
+    public ArrayList<DocumentSnapshot> AllCaretakers(String Rental_id){
+        ArrayList<DocumentSnapshot> data = new ArrayList<DocumentSnapshot>();
         Task<QuerySnapshot> caretakers = db.collection(collectionName).whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (DocumentSnapshot document : task.getResult().getDocuments()) {
-                        data.put(document.getId(), document);
-                    }
+                    data.addAll(task.getResult().getDocuments());
                 }
             }
         });

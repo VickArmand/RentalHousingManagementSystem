@@ -10,26 +10,26 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.HashMap;
 public class Auth {
-    private final FirebaseAuth mAuth;
-    protected FirebaseUser currentUser;
+    // Initialize Firebase Auth
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    protected static FirebaseUser currentUser;
     private final Context context;
     public Auth(Context context)
     {
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         this.context = context;
     }
-
-    public void Login(String email, String password){
+    public static FirebaseUser getCurrentUser()
+    {
+        return currentUser;
+    }
+    public FirebaseUser Login(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -37,15 +37,21 @@ public class Auth {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.v("AuthLogin", "signInWithCredential:success");
-                            Toast.makeText(context,"Login success", Toast.LENGTH_SHORT).show();
                             currentUser = mAuth.getCurrentUser();
+                            Log.v("CurrentUser", "Value "+currentUser.toString());
+                            Toast.makeText(context,"Login success", Toast.LENGTH_SHORT).show();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.v("AuthLogin", "signInWithCredential:failure" + task.getException());
+                            Log.v("CurrentUser", "Value "+currentUser.toString());
+                            currentUser = null;
+                            Log.v("CurrentUser", "Value "+currentUser.toString());
                             Toast.makeText(context,"Incorrect Email Address or Password", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+        return currentUser;
     }
     public void GoogleLogin(){
 //        Object signInRequest = BeginSignInRequest.builder().setGoogleIdTokenRequestOptions(GoogleIdTokenRequestOptions.builder()
