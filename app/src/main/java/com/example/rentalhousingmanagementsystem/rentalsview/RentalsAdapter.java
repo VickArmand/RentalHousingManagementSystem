@@ -15,18 +15,15 @@ import com.example.rentalhousingmanagementsystem.model.RentalsCrud;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class RentalsAdapter extends RecyclerView.Adapter<RentalsViewHolder> implements Filterable {
     private final Context context;
     private final ArrayList<DocumentSnapshot> rentals;
-    private RentalsCrud objRentals;
 
-    RentalsAdapter(Context context, ArrayList<DocumentSnapshot> rentals)
+    public RentalsAdapter(Context context, ArrayList<DocumentSnapshot> rentals)
     {
         this.context = context;
         this.rentals = rentals;
-        objRentals = new RentalsCrud(context);
     }
 
     @NonNull
@@ -41,6 +38,17 @@ public class RentalsAdapter extends RecyclerView.Adapter<RentalsViewHolder> impl
         final DocumentSnapshot rental = rentals.get(position);
         holder.name.setText((CharSequence) rental.get("name"));
         holder.numRooms.setText((CharSequence) rental.get("number_of_rooms"));
+        holder.updateRental.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new RentalsCrud(context).DeleteRental(rental.getId());
+            }
+        });
+        holder.deleteRental.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
     }
 
     @Override
