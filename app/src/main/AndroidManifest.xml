@@ -13,6 +13,9 @@
         android:theme="@style/Theme.RentalHousingManagementSystem"
         tools:targetApi="31" >
         <activity
+            android:name=".rentalUpdate"
+            android:exported="false" />
+        <activity
             android:name=".rentals"
             android:exported="false"
             android:label="@string/title_activity_rentals"

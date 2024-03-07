@@ -6,7 +6,7 @@ import android.view.MenuItem;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.example.rentalhousingmanagementsystem.model.Auth;
+import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
 import com.google.android.material.navigation.NavigationView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -63,7 +63,7 @@ private ActivityRentalsBinding binding;
             Toast.makeText(getApplicationContext(),"Logout Success", Toast.LENGTH_SHORT).show();
             new Auth(getApplicationContext()).Logout();
             Log.v("logout", "success");
-            new MainActivity().exit(getApplicationContext(), MainActivity.class);
+            new MainActivity().clearIntentStack(getApplicationContext(), MainActivity.class);
         }
 //        NavigationUI.onNavDestinationSelected(item, navController) ||
         return super.onOptionsItemSelected(item);

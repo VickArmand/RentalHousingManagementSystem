@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.model;
+package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
 import static android.content.ContentValues.TAG;
 

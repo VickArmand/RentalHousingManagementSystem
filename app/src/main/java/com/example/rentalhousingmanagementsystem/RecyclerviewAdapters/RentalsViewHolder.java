@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.rentalsview;
+package com.example.rentalhousingmanagementsystem.RecyclerviewAdapters;
 
 import android.view.View;
 import android.widget.ImageView;

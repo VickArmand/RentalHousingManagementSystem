@@ -65,4 +65,6 @@
     <string name="number_of_rooms">Number of Rooms</string>
     <string name="shalom_house">Shalom House</string>
     <string name="_10">10</string>
+    <string name="title_activity_rental_update">rentalUpdate</string>
+    <string name="update_rental">UPDATE RENTAL</string>
 </resources>

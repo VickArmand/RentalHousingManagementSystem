@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.model;
+package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
 import android.content.Context;
 import android.widget.Toast;
@@ -17,20 +17,19 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TenantsCrud extends DbConn{
-
-    private final String collectionName = "Tenants";
+public class CaretakersCrud extends DbConn{
+    private final String collectionName = "Caretakers";
     private final Context context;
-    private final String [] fields = {"first_name", "last_name", "national_ID", "email", "contact", "emergency_contact", "room_id", "status", "created_at", "created_by", "updated_at", "updated_by"};
+    private final String [] fields = {"first_name", "last_name", "national_ID", "email", "contact", "emergency_contact", "status", "created_at", "created_by", "updated_at", "updated_by"};
     private final String [] uniqueFields = {"first_name", "last_name", "national_ID", "email", "contact"};
-    private final String [] status = {"Available", "Vacated"};
-    public TenantsCrud (Context context)
+    private final String [] status = {"Active", "Inactive"};
+    public CaretakersCrud(Context context)
     {
         this.context = context;
     }
-    public void RegisterTenant(HashMap<String, String> data){
-        if (TenantExists(data))
-            Toast.makeText(context.getApplicationContext(), "Tenant Exists", Toast.LENGTH_SHORT).show();
+    public void RegisterCaretaker(HashMap<String, String> data){
+        if (CaretakerExists(data))
+            Toast.makeText(context, "Caretaker Exists", Toast.LENGTH_SHORT).show();
         else {
             db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
@@ -45,9 +44,9 @@ public class TenantsCrud extends DbConn{
             });
         }
     }
-    public ArrayList<DocumentSnapshot> AllTenants(String Rental_id){
+    public ArrayList<DocumentSnapshot> AllCaretakers(String Rental_id){
         ArrayList<DocumentSnapshot> data = new ArrayList<DocumentSnapshot>();
-        Task<QuerySnapshot> tenants = db.collection(collectionName).whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Task<QuerySnapshot> caretakers = db.collection(collectionName).whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
@@ -57,11 +56,11 @@ public class TenantsCrud extends DbConn{
         });
         return data;
     }
-    public HashMap<String, Object> GetTenant(String documentID)
+    public HashMap<String, Object> GetCaretaker(String documentID)
     {
-        HashMap<String, Object> data = new HashMap<String, Object>();
-        DocumentReference tenant = db.collection(collectionName).document(documentID);
-        tenant.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        HashMap<String, Object> data = new HashMap<>();
+        DocumentReference caretaker = db.collection(collectionName).document(documentID);
+        caretaker.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful())
@@ -77,7 +76,7 @@ public class TenantsCrud extends DbConn{
         });
         return data;
     }
-    public Boolean TenantExists (HashMap<String, String> data){
+    public Boolean CaretakerExists (HashMap<String, String> data){
         final boolean[] recordExists = {false};
         Task<QuerySnapshot> caretakers = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -100,25 +99,21 @@ public class TenantsCrud extends DbConn{
         });
         return recordExists[0];
     }
-    public void UpdateTenant(HashMap<String, String> data, String documentID)
+    public void UpdateCaretaker(HashMap<String, String> data, String documentID)
     {
-        DocumentReference tenant = db.collection(collectionName).document(documentID);
-        if (tenant.get().getResult().exists()) {
+        DocumentReference caretaker = db.collection(collectionName).document(documentID);
+        if (caretaker.get().getResult().exists()) {
             for (String f : fields) {
                 if (data.get(f) != null)
-                    tenant.update(f, data.get(f));
+                    caretaker.update(f, data.get(f));
             }
         }
         Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
     }
-    public void DeleteTenant(String documentID)
+    public void DeleteCaretaker(String documentID)
     {
-        DocumentReference tenant = db.collection(collectionName).document(documentID);
-        RoomsCrud objRoom = new RoomsCrud(context);
-        String room_id = (String) tenant.get().getResult().get("room_id");
-        objRoom.DeleteRoom(room_id);
-        tenant.update("room_id", "");
-        tenant.update("status", status[1]).addOnSuccessListener(new OnSuccessListener<Void>() {
+        DocumentReference caretaker = db.collection(collectionName).document(documentID);
+        caretaker.update("status", status[1]).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void avoid) {
                 Toast.makeText(context, collectionName + " deleted successfully", Toast.LENGTH_LONG).show();

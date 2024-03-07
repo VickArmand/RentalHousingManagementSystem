@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.model;
+package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
 import android.content.Context;
 import android.widget.Toast;
@@ -11,24 +11,21 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-public class TransactionsCrud extends DbConn{
-    private final String collectionName = "Transactions";
-    private final String [] fields = {"room_id", "credit", "debit", "tenant_id", "payment_mode", "evidence", "status", "created_at", "created_by", "updated_at", "updated_by"};
+public class TenantExpensesCrud extends DbConn{
+    private final String collectionName = "TenantsRentalExpenses";
+    private final String [] fields = {"category", "description", "payer", "frequency", "amount", "tenant_id", "deadline", "created_at", "created_by", "updated_at", "updated_by"};
     private Context context;
-    private final String [] status = {"Fully Paid", "Partially Paid", "Not Paid"};
-    public TransactionsCrud (Context context)
+    public TenantExpensesCrud (Context context)
     {
         this.context = context;
     }
 
-    public void RegisterTransaction(HashMap<String, String> data){
+    public void RegisterTenantExpense(HashMap<String, String> data){
         db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -41,9 +38,9 @@ public class TransactionsCrud extends DbConn{
             }
         });
     }
-    public ArrayList<DocumentSnapshot> AllTransactions(String tenantID){
+    public ArrayList<DocumentSnapshot> AllTenantExpenses(){
         ArrayList<DocumentSnapshot> data = new ArrayList<DocumentSnapshot>();
-        Task<QuerySnapshot> transactions = db.collection(collectionName).whereEqualTo("tenant_id", tenantID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Task<QuerySnapshot> tenantExpenses = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
@@ -53,11 +50,11 @@ public class TransactionsCrud extends DbConn{
         });
         return data;
     }
-    public HashMap<String, Object> GetTransaction(String documentID)
+    public HashMap<String, Object> GetTenantExpense(String documentID)
     {
         HashMap<String, Object> data = new HashMap<>();
-        DocumentReference transaction = db.collection(collectionName).document(documentID);
-        transaction.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        DocumentReference tenantExpense = db.collection(collectionName).document(documentID);
+        tenantExpense.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful())
@@ -73,15 +70,25 @@ public class TransactionsCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateTransaction(HashMap<String, String> data, String documentID)
+    public void UpdateTenantExpense(HashMap<String, String> data, String documentID)
     {
-        DocumentReference transaction = db.collection(collectionName).document(documentID);
-        if (transaction.get().getResult().exists()) {
+        DocumentReference tenantExpense = db.collection(collectionName).document(documentID);
+        if (tenantExpense.get().getResult().exists()) {
             for (String f : fields) {
                 if (data.get(f) != null)
-                    transaction.update(f, data.get(f));
+                    tenantExpense.update(f, data.get(f));
             }
         }
         Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+    }
+    public void DeleteTenantExpense(String documentID)
+    {
+        DocumentReference tenantExpense = db.collection(collectionName).document(documentID);
+        tenantExpense.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void avoid) {
+                Toast.makeText(context, collectionName + " deleted successfully", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

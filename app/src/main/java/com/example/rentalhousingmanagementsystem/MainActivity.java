@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.ui.AppBarConfiguration;
 
 import com.example.rentalhousingmanagementsystem.databinding.ActivityMainBinding;
-import com.example.rentalhousingmanagementsystem.model.Auth;
+import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
 import com.google.firebase.auth.FirebaseUser;
 
 
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser = Auth.getCurrentUser();
         if (currentUser != null)
         {
-            exit(getApplicationContext(), com.example.rentalhousingmanagementsystem.rentals.class);
+            clearIntentStack(getApplicationContext(), com.example.rentalhousingmanagementsystem.rentals.class);
         }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             currentUser = authObj.Login(email, password);
                             if (currentUser != null) {
-                                exit(getApplicationContext(), rentals.class);
+                                clearIntentStack(getApplicationContext(), rentals.class);
                             }
                         }
                     });
@@ -62,10 +61,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void exit(Context context, Class cls)
+    public void clearIntentStack(Context context, Class cls)
     {
         Intent intent = new Intent(context, cls);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finish();
         startActivity(intent);
+    }
+    public void nextIntent(Context context, Class cls)
+    {
+        Intent intent = new Intent(context, cls);
+        context.startActivity(intent);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.model;
+package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
