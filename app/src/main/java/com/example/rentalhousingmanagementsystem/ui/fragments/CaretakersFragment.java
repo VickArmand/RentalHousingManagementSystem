@@ -30,6 +30,7 @@ import com.example.rentalhousingmanagementsystem.databinding.FragmentCaretakersB
 import com.example.rentalhousingmanagementsystem.models.Caretakers;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.net.URISyntaxException;
@@ -143,7 +144,7 @@ public class CaretakersFragment extends Fragment {
                     Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 else
                 {
-                    FirebaseUser user = Auth.getCurrentUser();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     Caretakers caretaker = null;
                     try {
                         caretaker = new Caretakers(firstName, lastName, gender, nationalID, email, contact, eContact, room, Rental_ID, "Available",user.getEmail(), user.getEmail());

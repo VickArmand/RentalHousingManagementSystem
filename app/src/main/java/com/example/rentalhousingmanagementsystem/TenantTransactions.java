@@ -27,6 +27,7 @@ import com.example.rentalhousingmanagementsystem.models.Transactions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -85,7 +86,7 @@ public class TenantTransactions extends AppCompatActivity {
                     Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 else
                 {
-                    FirebaseUser user = Auth.getCurrentUser();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     Transactions transaction = null;
                     final int[] cost = new int[1];
                     FirebaseFirestore db = new DbConn().db;

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         context = getApplicationContext();
-        currentUser = Auth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
         {
             clearIntentStack(context, com.example.rentalhousingmanagementsystem.rentals.class);

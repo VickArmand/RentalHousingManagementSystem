@@ -27,6 +27,7 @@ import com.example.rentalhousingmanagementsystem.R;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentTenantsBinding;
 import com.example.rentalhousingmanagementsystem.models.Tenants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.text.ParseException;
@@ -152,7 +153,7 @@ public class TenantsFragment extends Fragment {
                 {
                     Tenants tenant = null;
                     TenantsCrud objTenants = new TenantsCrud(context);
-                    FirebaseUser user = Auth.getCurrentUser();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     try {
                         tenant = new Tenants(firstName, lastName, gender, nationalID, email, contact, eContact, room, Rental_id, "Available",user.getEmail(), user.getEmail());
                     } catch (ParseException e) {

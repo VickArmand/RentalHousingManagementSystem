@@ -21,13 +21,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.RoomsCrud;
 import com.example.rentalhousingmanagementsystem.R;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentRoomsBinding;
 import com.example.rentalhousingmanagementsystem.models.Rooms;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.net.URISyntaxException;
@@ -127,7 +127,7 @@ public class RoomsFragment extends Fragment {
                     Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 else
                 {
-                    FirebaseUser user = Auth.getCurrentUser();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     Rooms room = null;
                     try {
                         room = new Rooms(name, Integer.parseInt(cost), description, Integer.parseInt(tenants), "Vacant", Rental_ID, user.getEmail(), user.getEmail());
