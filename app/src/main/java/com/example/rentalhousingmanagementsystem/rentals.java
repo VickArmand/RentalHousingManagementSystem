@@ -1,5 +1,6 @@
 package com.example.rentalhousingmanagementsystem;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.rentalhousingmanagementsystem.databinding.ActivityRentalsBinding;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class rentals extends AppCompatActivity {
 
@@ -60,12 +62,13 @@ private ActivityRentalsBinding binding;
     {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_rentals);
         if (item.getItemId() == R.id.action_logout) {
-            Toast.makeText(getApplicationContext(),"Logout Success", Toast.LENGTH_SHORT).show();
-            new Auth(getApplicationContext()).Logout();
+            Toast.makeText(this,"Logout Success", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
             Log.v("logout", "success");
-            new MainActivity().clearIntentStack(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
-//        NavigationUI.onNavDestinationSelected(item, navController) ||
         return super.onOptionsItemSelected(item);
     }
 }

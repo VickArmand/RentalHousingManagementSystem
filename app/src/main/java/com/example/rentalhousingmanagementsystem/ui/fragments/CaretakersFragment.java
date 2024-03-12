@@ -115,14 +115,14 @@ public class CaretakersFragment extends Fragment {
         EditText caretakerContact = subview.findViewById(R.id.txtcontact);
         EditText caretakerEContact = subview.findViewById(R.id.txtecontact);
         Spinner caretakerGender = subview.findViewById(R.id.txtgender);
-        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(context, R.array.gender, R.layout.tenants_add);
-        genderAdapter.setDropDownViewResource(R.layout.tenants_add);
+        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(context, R.array.gender, android.R.layout.simple_spinner_item);
+        genderAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         caretakerGender.setAdapter(genderAdapter);
         EditText caretakerID = subview.findViewById(R.id.txtnationalID);
         EditText caretakerEmail = subview.findViewById(R.id.txtemail);
         Spinner caretakerRoom = subview.findViewById(R.id.txtroom);
-        ArrayAdapter<CharSequence> roomAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, R.layout.tenants_add);
-        roomAdapter.setDropDownViewResource(R.layout.tenants_add);
+        ArrayAdapter<CharSequence> roomAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, android.R.layout.simple_spinner_item);
+        roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         caretakerRoom.setAdapter(roomAdapter);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("ADD CARETAKER");
