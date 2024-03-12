@@ -83,12 +83,12 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionViewHol
         LayoutInflater inflater = LayoutInflater.from(context);
         View subview = inflater.inflate(R.layout.activity_transaction_update, null);
         Spinner transactionCategory = subview.findViewById(R.id.txtcategory);
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(context, R.array.transactionCategory, R.layout.activity_transaction_update);
-        categoryAdapter.setDropDownViewResource(R.layout.tenants_add);
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(context, R.array.transactionCategory, android.R.layout.simple_spinner_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         transactionCategory.setAdapter(categoryAdapter);
         Spinner transactionMode = subview.findViewById(R.id.txtpaymentmode);
-        ArrayAdapter<CharSequence> modeAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, R.layout.tenants_add);
-        modeAdapter.setDropDownViewResource(R.layout.tenants_add);
+        ArrayAdapter<CharSequence> modeAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, android.R.layout.simple_spinner_item);
+        modeAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         transactionMode.setAdapter(modeAdapter);
         EditText transactionAmount = subview.findViewById(R.id.txtamount);
         DatePicker transactionDate = subview.findViewById(R.id.txtdeadline);

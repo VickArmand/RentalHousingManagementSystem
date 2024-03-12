@@ -3,11 +3,14 @@ package com.example.rentalhousingmanagementsystem.Firestoremodel;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.rentalhousingmanagementsystem.MainActivity;
+import com.example.rentalhousingmanagementsystem.rentals;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,30 +30,6 @@ public class Auth {
     }
     public static FirebaseUser getCurrentUser()
     {
-        return currentUser;
-    }
-    public FirebaseUser Login(String email, String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.v("AuthLogin", "signInWithCredential:success");
-                            currentUser = mAuth.getCurrentUser();
-                            Log.v("CurrentUser", "Value "+currentUser.toString());
-                            Toast.makeText(context,"Login success", Toast.LENGTH_SHORT).show();
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.v("AuthLogin", "signInWithCredential:failure" + task.getException());
-                            Log.v("CurrentUser", "Value "+currentUser.toString());
-                            currentUser = null;
-                            Log.v("CurrentUser", "Value "+currentUser.toString());
-                            Toast.makeText(context,"Incorrect Email Address or Password", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
         return currentUser;
     }
     public void GoogleLogin(){
@@ -81,9 +60,6 @@ public class Auth {
 //                        }
 //                    });
 //        }
-    }
-    public void Logout(){
-        FirebaseAuth.getInstance().signOut();
     }
     public void Register(HashMap data) {
         String email = (String) data.get("email");

@@ -64,37 +64,40 @@ public class RentalsCrud extends DbConn{
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 ArrayList<Rentals> data = new ArrayList<>() ;
-                if (!value.isEmpty())
+                if (value != null)
                 {
-                    for (DocumentSnapshot d : value.getDocuments())
+                    if (!value.isEmpty())
                     {
-                        String name = (String) d.get(fields[0]);
-                        int numRooms = Integer.parseInt((String.valueOf(d.get(fields[1]))));
-                        String status = (String) d.get(fields[2]);
-                        String creator = (String) d.get(fields[4]);
-                        String updator = (String) d.get(fields[6]);
-                        try {
-                            Rentals rental = new Rentals(name, numRooms, status, creator, updator);
-                            rental.setId(d.getId());
-                            data.add(rental);
-                        } catch (ParseException e) {
-                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
+                        for (DocumentSnapshot d : value.getDocuments())
+                        {
+                            String name = (String) d.get(fields[0]);
+                            int numRooms = Integer.parseInt((String.valueOf(d.get(fields[1]))));
+                            String status = (String) d.get(fields[2]);
+                            String creator = (String) d.get(fields[4]);
+                            String updator = (String) d.get(fields[6]);
+                            try {
+                                Rentals rental = new Rentals(name, numRooms, status, creator, updator);
+                                rental.setId(d.getId());
+                                data.add(rental);
+                            } catch (ParseException e) {
+                                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
+                            }
                         }
                     }
+                    if (data.size() > 0)
+                    {
+                        rv.setVisibility(View.VISIBLE);
+                        RentalsAdapter rad = new RentalsAdapter(context, data);
+                        rv.setAdapter(rad);
+                        rad.notifyDataSetChanged();
+                    }
+                    else
+                    {
+                        Toast.makeText(context, "No "+collectionName+" available", Toast.LENGTH_SHORT).show();
+                        rv.setVisibility(View.GONE);
+                    }
+                    pd.dismiss();
                 }
-                if (data.size() > 0)
-                {
-                    rv.setVisibility(View.VISIBLE);
-                    RentalsAdapter rad = new RentalsAdapter(context, data);
-                    rv.setAdapter(rad);
-                    rad.notifyDataSetChanged();
-                }
-                else
-                {
-                    Toast.makeText(context, "No "+collectionName+" available", Toast.LENGTH_SHORT).show();
-                    rv.setVisibility(View.GONE);
-                }
-                pd.dismiss();
             }
         });
     }

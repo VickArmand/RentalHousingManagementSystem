@@ -1,13 +1,10 @@
 package com.example.rentalhousingmanagementsystem.ui.fragments;
 
-import static android.content.Intent.getIntent;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +15,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -29,10 +27,8 @@ import com.example.rentalhousingmanagementsystem.R;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentTenantsBinding;
 import com.example.rentalhousingmanagementsystem.models.Tenants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Objects;
@@ -115,15 +111,25 @@ public class TenantsFragment extends Fragment {
         EditText tenantContact = subview.findViewById(R.id.txtcontact);
         EditText tenantEContact = subview.findViewById(R.id.txtecontact);
         Spinner tenantGender = subview.findViewById(R.id.txtgender);
-        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(context, R.array.gender, R.layout.tenants_add);
-        genderAdapter.setDropDownViewResource(R.layout.tenants_add);
+        ArrayAdapter genderAdapter = ArrayAdapter.createFromResource(context, R.array.gender, android.R.layout.simple_spinner_item);
+        genderAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         tenantGender.setAdapter(genderAdapter);
-//        tenantGender.setOnItemSelectedListener(this);
+        tenantGender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         EditText tenantID = subview.findViewById(R.id.txtnationalID);
         EditText tenantEmail = subview.findViewById(R.id.txtemail);
         Spinner tenantRoom = subview.findViewById(R.id.txtroom);
-        ArrayAdapter<CharSequence> roomAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, R.layout.tenants_add);
-        roomAdapter.setDropDownViewResource(R.layout.tenants_add);
+        ArrayAdapter<CharSequence> roomAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, android.R.layout.simple_spinner_item);
+        roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         tenantRoom.setAdapter(roomAdapter);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("ADD TENANT");
