@@ -72,10 +72,8 @@ public class TenantsAdapter extends RecyclerView.Adapter<TenantsViewHolder> impl
         });
         holder.name.setText(String.format("%s %s", tenant.getFirstName(), tenant.getLastName()));
         String room_id = tenant.getRoom_id();
-        final String[] room_name = {"None"};
-        FirebaseFirestore db = new DbConn().db;
-        DocumentReference room = db.collection("Rooms").document(room_id);
-        room.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        final String[] room_name = new String[1];
+        new DbConn().db.collection("Rooms").document(room_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful())
@@ -84,10 +82,12 @@ public class TenantsAdapter extends RecyclerView.Adapter<TenantsViewHolder> impl
                     if (doc.exists()) {
                         room_name[0] = (String) doc.get("name");
                     }
+                    else
+                        room_name[0] = "None";
+                    holder.room.setText(room_name[0]);
                 }
             }
         });
-        holder.room.setText(room_name[0]);
         holder.updateRental.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -59,32 +59,34 @@ public class TransactionsCrud extends DbConn{
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 ArrayList<Transactions> data = new ArrayList<>();
-                if (!value.isEmpty()) {
-                    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                    for (DocumentSnapshot d : value.getDocuments()) {
-                        String category = (String) d.get(fields[0]);
-                        String roomId = (String) d.get(fields[1]);
-                        String paymentMode = (String) d.get(fields[5]);
-                        String evidence = (String) d.get(fields[7]);
-                        int credit = Integer.parseInt(String.valueOf(d.get(fields[2])));
-                        int debit = Integer.parseInt(String.valueOf(d.get(fields[3])));
-                        String tenant_id = (String) d.get(fields[4]);
-                        String rental_id = (String) d.get("rental_id");
-                        String paymentStatus = (String) d.get(fields[8]);
-                        Date paymentDate = null;
-                        try {
-                            paymentDate = dateFormat.parse(dateFormat.format(d.get(fields[6])));
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
-                        String creator = (String) d.get(fields[10]);
-                        String updator = (String) d.get(fields[12]);
-                        try {
-                            Transactions transaction = new Transactions(category, rental_id, roomId, credit, debit, paymentMode, evidence, tenant_id, paymentStatus, creator, updator, paymentDate);
-                            transaction.setId(d.getId());
-                            data.add(transaction);
-                        } catch (ParseException e) {
-                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
+                if (value != null) {
+                    if (!value.isEmpty()) {
+                        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        for (DocumentSnapshot d : value.getDocuments()) {
+                            String category = (String) d.get(fields[0]);
+                            String roomId = (String) d.get(fields[1]);
+                            String paymentMode = (String) d.get(fields[5]);
+                            String evidence = (String) d.get(fields[7]);
+                            int credit = Integer.parseInt(String.valueOf(d.get(fields[2])));
+                            int debit = Integer.parseInt(String.valueOf(d.get(fields[3])));
+                            String tenant_id = (String) d.get(fields[4]);
+                            String rental_id = (String) d.get("rental_id");
+                            String paymentStatus = (String) d.get(fields[8]);
+                            Date paymentDate = null;
+                            try {
+                                paymentDate = dateFormat.parse(dateFormat.format(d.get(fields[6])));
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
+                            String creator = (String) d.get(fields[10]);
+                            String updator = (String) d.get(fields[12]);
+                            try {
+                                Transactions transaction = new Transactions(category, rental_id, roomId, credit, debit, paymentMode, evidence, tenant_id, paymentStatus, creator, updator, paymentDate);
+                                transaction.setId(d.getId());
+                                data.add(transaction);
+                            } catch (ParseException e) {
+                                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
+                            }
                         }
                     }
                 }

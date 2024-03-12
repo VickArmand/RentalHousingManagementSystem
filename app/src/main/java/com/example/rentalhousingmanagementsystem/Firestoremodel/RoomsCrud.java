@@ -61,24 +61,24 @@ public class RoomsCrud extends DbConn{
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 ArrayList<Rooms> data = new ArrayList<>() ;
-                if (!value.isEmpty())
-                {
-                    for (DocumentSnapshot d : value.getDocuments())
-                    {
-                        String name = (String) d.get(fields[0]);
-                        int cost = Integer.parseInt((String.valueOf(d.get(fields[1]))));
-                        int tenants = Integer.parseInt((String.valueOf(d.get(fields[3]))));
-                        String description = (String) d.get(fields[2]);
-                        String status = (String) d.get(fields[2]);
-                        String rental_id = (String) d.get(fields[5]);
-                        String creator = (String) d.get(fields[7]);
-                        String updator = (String) d.get(fields[9]);
-                        try {
-                            Rooms room = new Rooms(name, cost, description, tenants, status, rental_id, creator, updator);
-                            room.setId(d.getId());
-                            data.add(room);
-                        } catch (ParseException e) {
-                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                if (value != null) {
+                    if (!value.isEmpty()) {
+                        for (DocumentSnapshot d : value.getDocuments()) {
+                            String name = (String) d.get(fields[0]);
+                            int cost = Integer.parseInt((String.valueOf(d.get(fields[1]))));
+                            int tenants = Integer.parseInt((String.valueOf(d.get(fields[3]))));
+                            String description = (String) d.get(fields[2]);
+                            String status = (String) d.get(fields[2]);
+                            String rental_id = (String) d.get(fields[5]);
+                            String creator = (String) d.get(fields[7]);
+                            String updator = (String) d.get(fields[9]);
+                            try {
+                                Rooms room = new Rooms(name, cost, description, tenants, status, rental_id, creator, updator);
+                                room.setId(d.getId());
+                                data.add(room);
+                            } catch (ParseException e) {
+                                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 }

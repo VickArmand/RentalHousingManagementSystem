@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -66,7 +67,13 @@ public class TenantTransactions extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(context);
         View subview = inflater.inflate(R.layout.transactions_add, null);
         Spinner transactionCategory = subview.findViewById(R.id.txtcategory);
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(context, R.array.transactionCategory, android.R.layout.simple_spinner_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+        transactionCategory.setAdapter(categoryAdapter);
         Spinner transactionMode = subview.findViewById(R.id.txtpaymentmode);
+        ArrayAdapter<CharSequence> modeAdapter = ArrayAdapter.createFromResource(context, R.array.transactionMode, android.R.layout.simple_spinner_item);
+        modeAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+        transactionMode.setAdapter(modeAdapter);
         EditText transactionCredit = subview.findViewById(R.id.txtamount);
         DatePicker transactionDate = subview.findViewById(R.id.txtdeadline);
         // Add image

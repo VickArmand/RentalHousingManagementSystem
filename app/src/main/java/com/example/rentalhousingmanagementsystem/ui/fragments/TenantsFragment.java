@@ -7,11 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +25,26 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
+import com.example.rentalhousingmanagementsystem.Firestoremodel.DbConn;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.TenantsCrud;
 import com.example.rentalhousingmanagementsystem.R;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentTenantsBinding;
 import com.example.rentalhousingmanagementsystem.models.Tenants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -115,23 +128,29 @@ public class TenantsFragment extends Fragment {
         ArrayAdapter genderAdapter = ArrayAdapter.createFromResource(context, R.array.gender, android.R.layout.simple_spinner_item);
         genderAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
         tenantGender.setAdapter(genderAdapter);
-        tenantGender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         EditText tenantID = subview.findViewById(R.id.txtnationalID);
         EditText tenantEmail = subview.findViewById(R.id.txtemail);
         Spinner tenantRoom = subview.findViewById(R.id.txtroom);
-        ArrayAdapter<CharSequence> roomAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, android.R.layout.simple_spinner_item);
-        roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        tenantRoom.setAdapter(roomAdapter);
+        HashMap<String, String > data = new HashMap<>();
+        List<String> val = new ArrayList<>();
+        new DbConn().db.collection("Rooms").whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                QuerySnapshot value = task.getResult();
+                if (!value.isEmpty())
+                {
+                    for (DocumentSnapshot d : value.getDocuments()) {
+                        data.put((String) d.get("name"), d.getId());
+                        val.add((String) d.get("name"));
+                    }
+                    ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, val);
+                    roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+                    tenantRoom.setAdapter(roomAdapter);
+                }
+            }
+        });
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("ADD TENANT");
         builder.setView(subview);
@@ -144,7 +163,7 @@ public class TenantsFragment extends Fragment {
                 String contact = tenantContact.getText().toString();
                 String gender = tenantGender.getSelectedItem().toString();
                 String email = tenantEmail.getText().toString();
-                String room = tenantRoom.getSelectedItem().toString();
+                String room = data.get(tenantRoom.getSelectedItem().toString());
                 String eContact = tenantEContact.getText().toString();
                 String nationalID = tenantID.getText().toString();
                 if (TextUtils.isEmpty(firstName) ||TextUtils.isEmpty(lastName) ||TextUtils.isEmpty(contact) ||TextUtils.isEmpty(gender) || TextUtils.isEmpty(email)|| TextUtils.isEmpty(room)|| TextUtils.isEmpty(eContact)|| TextUtils.isEmpty(nationalID))
@@ -155,7 +174,7 @@ public class TenantsFragment extends Fragment {
                     TenantsCrud objTenants = new TenantsCrud(context);
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     try {
-                        tenant = new Tenants(firstName, lastName, gender, nationalID, email, contact, eContact, room, Rental_id, "Available",user.getEmail(), user.getEmail());
+                        tenant = new Tenants(firstName, lastName, gender, nationalID, email, contact, eContact, room, Rental_id, "Available", user.getEmail(), user.getEmail());
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }

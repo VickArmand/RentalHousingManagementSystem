@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,17 +26,24 @@ import android.widget.Toast;
 
 import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.CaretakersCrud;
+import com.example.rentalhousingmanagementsystem.Firestoremodel.DbConn;
 import com.example.rentalhousingmanagementsystem.R;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentCaretakersBinding;
 import com.example.rentalhousingmanagementsystem.models.Caretakers;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -122,9 +130,24 @@ public class CaretakersFragment extends Fragment {
         EditText caretakerID = subview.findViewById(R.id.txtnationalID);
         EditText caretakerEmail = subview.findViewById(R.id.txtemail);
         Spinner caretakerRoom = subview.findViewById(R.id.txtroom);
-        ArrayAdapter<CharSequence> roomAdapter = ArrayAdapter.createFromResource(context, R.array.rooms, android.R.layout.simple_spinner_item);
-        roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
-        caretakerRoom.setAdapter(roomAdapter);
+        HashMap<String, String > data = new HashMap<>();
+        List<String> val = new ArrayList<>();
+        new DbConn().db.collection("Rooms").whereEqualTo("rental_id", Rental_ID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                QuerySnapshot value = task.getResult();
+                if (!value.isEmpty())
+                {
+                    for (DocumentSnapshot d : value.getDocuments()) {
+                        data.put((String) d.get("name"), d.getId());
+                        val.add((String) d.get("name"));
+                    }
+                    ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, val);
+                    roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+                    caretakerRoom.setAdapter(roomAdapter);
+                }
+            }
+        });
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("ADD CARETAKER");
         builder.setView(subview);
@@ -138,7 +161,7 @@ public class CaretakersFragment extends Fragment {
                 String contact = caretakerContact.getText().toString();
                 String gender = caretakerGender.getSelectedItem().toString();
                 String email = caretakerEmail.getText().toString();
-                String room = caretakerRoom.getSelectedItem().toString();
+                String room = data.get(caretakerRoom.getSelectedItem().toString());
                 String eContact = caretakerEContact.getText().toString();
                 if (TextUtils.isEmpty(firstName) ||TextUtils.isEmpty(lastName) ||TextUtils.isEmpty(contact) ||TextUtils.isEmpty(gender) || TextUtils.isEmpty(email)|| TextUtils.isEmpty(room)|| TextUtils.isEmpty(eContact)|| TextUtils.isEmpty(nationalID))
                     Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show();
@@ -167,7 +190,7 @@ public class CaretakersFragment extends Fragment {
                     data.put("created_by", Objects.requireNonNull(caretaker.getCreated_by()));
                     data.put("updated_by", Objects.requireNonNull(caretaker.getUpdated_by()));
                     data.put("updated_at", Objects.requireNonNull(caretaker.getUpdated_at()));
-                    objCaretakers.UpdateCaretaker(data, caretaker.getId());
+                    objCaretakers.RegisterCaretaker(data);
                     ((Activity) context).finish();
                     context.startActivity(((Activity) context).getIntent());
                 }

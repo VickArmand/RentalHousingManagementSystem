@@ -18,10 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rentalhousingmanagementsystem.Firestoremodel.CaretakersCrud;
+import com.example.rentalhousingmanagementsystem.Firestoremodel.DbConn;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.RoomsCrud;
 import com.example.rentalhousingmanagementsystem.R;
 import com.example.rentalhousingmanagementsystem.Rental_details;
 import com.example.rentalhousingmanagementsystem.models.Caretakers;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -52,7 +56,23 @@ public class CaretakersAdapter extends RecyclerView.Adapter<CaretakersViewHolder
         Caretakers caretaker = caretakers.get(position);
 
         holder.name.setText(String.format("%s %s", caretaker.getFirstName(), caretaker.getLastName()));
-//        holder.room.setText((String) new RoomsCrud(context).GetRoom(caretaker.getRoom_id()).get("name"));
+        String room_id = caretaker.getRoom_id();
+        final String[] room_name = new String[1];
+        new DbConn().db.collection("Rooms").document(room_id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful())
+                {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        room_name[0] = (String) doc.get("name");
+                    }
+                    else
+                        room_name[0] = "None";
+                    holder.room.setText(room_name[0]);
+                }
+            }
+        });
         holder.updateRental.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

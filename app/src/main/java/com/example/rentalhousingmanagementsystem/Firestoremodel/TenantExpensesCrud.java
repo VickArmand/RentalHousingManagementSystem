@@ -56,25 +56,25 @@ public class TenantExpensesCrud extends DbConn{
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 ArrayList<TenantExpenses> data = new ArrayList<>() ;
-                if (!value.isEmpty())
-                {
-                    for (DocumentSnapshot d : value.getDocuments())
-                    {
-                        String category = (String) d.get(fields[0]);
-                        String description = (String) d.get(fields[1]);
-                        String payer = (String) d.get(fields[2]);
-                        String frequency = (String) d.get(fields[3]);
-                        int amount = Integer.parseInt(String.valueOf(d.get(fields[4])));
-                        String tenant_id = (String) d.get(fields[5]);
-                        Date deadline = (Date) d.get(fields[6]);
-                        String creator = (String) d.get(fields[8]);
-                        String updator = (String) d.get(fields[11]);
-                        try {
-                            TenantExpenses tenantExpense = new TenantExpenses(category, payer, amount, tenant_id, description, frequency, deadline, creator, updator);
-                            tenantExpense.setId(d.getId());
-                            data.add(tenantExpense);
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
+                if (value != null) {
+                    if (!value.isEmpty()) {
+                        for (DocumentSnapshot d : value.getDocuments()) {
+                            String category = (String) d.get(fields[0]);
+                            String description = (String) d.get(fields[1]);
+                            String payer = (String) d.get(fields[2]);
+                            String frequency = (String) d.get(fields[3]);
+                            int amount = Integer.parseInt(String.valueOf(d.get(fields[4])));
+                            String tenant_id = (String) d.get(fields[5]);
+                            Date deadline = (Date) d.get(fields[6]);
+                            String creator = (String) d.get(fields[8]);
+                            String updator = (String) d.get(fields[11]);
+                            try {
+                                TenantExpenses tenantExpense = new TenantExpenses(category, payer, amount, tenant_id, description, frequency, deadline, creator, updator);
+                                tenantExpense.setId(d.getId());
+                                data.add(tenantExpense);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }

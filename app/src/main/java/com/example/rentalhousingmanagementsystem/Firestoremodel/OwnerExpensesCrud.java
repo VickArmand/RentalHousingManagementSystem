@@ -56,21 +56,23 @@ public class OwnerExpensesCrud extends DbConn{
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 ArrayList<OwnerExpenses> data = new ArrayList<>();
-                if (!value.isEmpty()) {
-                    for (DocumentSnapshot d : value.getDocuments()) {
-                        String category = (String) d.get(fields[0]);
-                        String description = (String) d.get(fields[1]);
-                        String frequency = (String) d.get(fields[2]);
-                        int amount = Integer.parseInt(String.valueOf(d.get(fields[3])));
-                        Date deadline = (Date) d.get(fields[4]);
-                        String creator = (String) d.get(fields[6]);
-                        String updator = (String) d.get(fields[8]);
-                        try {
-                            OwnerExpenses ownerExpense = new OwnerExpenses(category, amount, description, frequency, deadline, creator, updator);
-                            ownerExpense.setId(d.getId());
-                            data.add(ownerExpense);
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
+                if (value != null) {
+                    if (!value.isEmpty()) {
+                        for (DocumentSnapshot d : value.getDocuments()) {
+                            String category = (String) d.get(fields[0]);
+                            String description = (String) d.get(fields[1]);
+                            String frequency = (String) d.get(fields[2]);
+                            int amount = Integer.parseInt(String.valueOf(d.get(fields[3])));
+                            Date deadline = (Date) d.get(fields[4]);
+                            String creator = (String) d.get(fields[6]);
+                            String updator = (String) d.get(fields[8]);
+                            try {
+                                OwnerExpenses ownerExpense = new OwnerExpenses(category, amount, description, frequency, deadline, creator, updator);
+                                ownerExpense.setId(d.getId());
+                                data.add(ownerExpense);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }

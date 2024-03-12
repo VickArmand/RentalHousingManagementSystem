@@ -62,26 +62,28 @@ public class TenantsCrud extends DbConn{
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 ArrayList<Tenants> data = new ArrayList<>();
-                if (!value.isEmpty()) {
-                    for (DocumentSnapshot d : value.getDocuments()) {
-                        String firstName = (String) d.get("first_name");
-                        String lastName = (String) d.get("last_name");
-                        String gender = (String) d.get("gender");
-                        String nationalID = (String) d.get("national_ID");
-                        String email = (String) d.get("email");
-                        String contact = (String) d.get("contact");
-                        String eContact = (String) d.get("emergency_contact");
-                        String room_id = (String) d.get("room_id");
-                        String rental_id = (String) d.get("rental_id");
-                        String status = (String) d.get("status");
-                        String creator = (String) d.get("created_by");
-                        String updator = (String) d.get("updated_by");
-                        try {
-                            Tenants tenant = new Tenants(firstName, lastName, gender, nationalID, email, contact, eContact, room_id, rental_id, status, creator, updator);
-                            tenant.setId(d.getId());
-                            data.add(tenant);
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
+                if (value != null) {
+                    if (!value.isEmpty()) {
+                        for (DocumentSnapshot d : value.getDocuments()) {
+                            String firstName = (String) d.get("first_name");
+                            String lastName = (String) d.get("last_name");
+                            String gender = (String) d.get("gender");
+                            String nationalID = (String) d.get("national_ID");
+                            String email = (String) d.get("email");
+                            String contact = (String) d.get("contact");
+                            String eContact = (String) d.get("emergency_contact");
+                            String room_id = (String) d.get("room_id");
+                            String rental_id = (String) d.get("rental_id");
+                            String status = (String) d.get("status");
+                            String creator = (String) d.get("created_by");
+                            String updator = (String) d.get("updated_by");
+                            try {
+                                Tenants tenant = new Tenants(firstName, lastName, gender, nationalID, email, contact, eContact, room_id, rental_id, status, creator, updator);
+                                tenant.setId(d.getId());
+                                data.add(tenant);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }
