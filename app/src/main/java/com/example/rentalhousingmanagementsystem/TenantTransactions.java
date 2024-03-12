@@ -102,7 +102,7 @@ public class TenantTransactions extends AppCompatActivity {
                         }
                     });
                     try {
-                        transaction = new Transactions(category, rentalID, roomID, Integer.parseInt(credit), (cost[0] - Integer.parseInt(credit)),mode,"", tenantID, "Available",user.getEmail(), user.getEmail(), date);
+                        transaction = new Transactions(category, rentalID, roomID, Integer.parseInt(credit), (cost[0] - Integer.parseInt(credit)),mode,"", tenantID, "Available", user.getEmail(), user.getEmail(), date);
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
