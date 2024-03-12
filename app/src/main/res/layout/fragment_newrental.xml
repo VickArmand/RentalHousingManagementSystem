@@ -5,7 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.rentals.NewRentalFragment"
+    tools:context=".ui.fragments.NewRentalFragment"
     android:padding="50dp">
 
     <RelativeLayout

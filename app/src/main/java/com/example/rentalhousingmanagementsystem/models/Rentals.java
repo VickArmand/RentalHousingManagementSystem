@@ -11,17 +11,18 @@ public class Rentals {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(format);
     private int number_of_rooms;
     // new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
-    public Rentals(String id, String name, int number_of_rooms, String status, String created_by, String updated_by) throws ParseException {
-        this.id = id;
+    public Rentals(String name, int number_of_rooms, String status, String created_by, String updated_by) throws ParseException {
         this.name = name;
         this.number_of_rooms = number_of_rooms;
         this.status = status;
-//        this.created_at = dateFormat.format(new Date());
-//        this.updated_at = dateFormat.format(new Date());
         this.created_at = dateFormat.parse(dateFormat.format(new Date()));
         this.updated_at = dateFormat.parse(dateFormat.format(new Date()));
         this.created_by = created_by;
         this.updated_by = updated_by;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -50,6 +51,10 @@ public class Rentals {
 
     public void setUpdated_at() throws ParseException {
         this.updated_at = dateFormat.parse(dateFormat.format(new Date()));
+    }
+
+    public Date getCreated_at() {
+        return created_at;
     }
 
     public Date getUpdated_at() {

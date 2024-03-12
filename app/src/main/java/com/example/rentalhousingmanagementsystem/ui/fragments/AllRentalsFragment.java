@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.ui.rentals;
+package com.example.rentalhousingmanagementsystem.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -27,9 +27,6 @@ private FragmentAllrentalsBinding binding;
     binding = FragmentAllrentalsBinding.inflate(inflater, container, false);
     View root = binding.getRoot();
         ProgressDialog pd = new ProgressDialog(getContext());
-        pd.setCancelable(false);
-        pd.setMessage("Fetching Data ...");
-        pd.show();
         final RecyclerView rv = binding.rentalsrv;
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);

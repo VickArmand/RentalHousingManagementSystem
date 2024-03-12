@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rentalhousingmanagementsystem.models.Rentals;
@@ -16,6 +17,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -36,14 +39,10 @@ public class RentalsCrud extends DbConn{
     {
         this.context = context;
     }
-    public void RegisterRental(HashMap<String, String> data){
+    public void RegisterRental(HashMap<String, Object> data){
         if (RentalExists(data))
             Toast.makeText(context.getApplicationContext(), "Rental Exists", Toast.LENGTH_SHORT).show();
         else {
-            String date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
-            data.put("status", status[0]);
-            data.put("created_at", date);
-            data.put("updated_at", date);
             db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
@@ -58,39 +57,44 @@ public class RentalsCrud extends DbConn{
         }
     }
     public void AllRentals(RecyclerView rv, ProgressDialog pd){
-        Task<QuerySnapshot> rentals = db.collection(collectionName).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        pd.setCancelable(false);
+        pd.setMessage("Fetching Data ...");
+        pd.show();
+        db.collection(collectionName).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty())
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                ArrayList<Rentals> data = new ArrayList<>() ;
+                if (!value.isEmpty())
                 {
-                    ArrayList<Rentals> data = new ArrayList<>() ;
-                    for (DocumentSnapshot d : queryDocumentSnapshots.getDocuments())
+                    for (DocumentSnapshot d : value.getDocuments())
                     {
-                        String id = d.getId();
                         String name = (String) d.get(fields[0]);
                         int numRooms = Integer.parseInt((String.valueOf(d.get(fields[1]))));
                         String status = (String) d.get(fields[2]);
-                        String email = Auth.getCurrentUser().getEmail();
+                        String creator = (String) d.get(fields[4]);
+                        String updator = (String) d.get(fields[6]);
                         try {
-                            data.add(new Rentals(d.getId(), name, numRooms, status, email, email));
+                            Rentals rental = new Rentals(name, numRooms, status, creator, updator);
+                            rental.setId(d.getId());
+                            data.add(rental);
                         } catch (ParseException e) {
-                            throw new RuntimeException(e);
+                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
                         }
                     }
-                    if (data.size() > 0)
-                    {
-                        rv.setVisibility(View.VISIBLE);
-                        RentalsAdapter rad = new RentalsAdapter(context, data);
-                        rv.setAdapter(rad);
-                        pd.dismiss();
-                        rad.notifyDataSetChanged();
-                    }
-                    else
-                    {
-                        Toast.makeText(context, "No rentals available", Toast.LENGTH_SHORT).show();
-                        rv.setVisibility(View.GONE);
-                    }
                 }
+                if (data.size() > 0)
+                {
+                    rv.setVisibility(View.VISIBLE);
+                    RentalsAdapter rad = new RentalsAdapter(context, data);
+                    rv.setAdapter(rad);
+                    rad.notifyDataSetChanged();
+                }
+                else
+                {
+                    Toast.makeText(context, "No "+collectionName+" available", Toast.LENGTH_SHORT).show();
+                    rv.setVisibility(View.GONE);
+                }
+                pd.dismiss();
             }
         });
     }
@@ -114,7 +118,7 @@ public class RentalsCrud extends DbConn{
         });
         return data;
     }
-    public Boolean RentalExists (HashMap<String, String> data){
+    public Boolean RentalExists (HashMap<String, Object> data){
         final boolean[] recordExists = {false};
         Task<QuerySnapshot> rentals = db.collection(collectionName).whereEqualTo(uniqueFields[0], data.get(uniqueFields[0])).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -159,7 +163,7 @@ public class RentalsCrud extends DbConn{
 //                data.put("status", status[1]);
 //                for (String roomId : rooms.keySet())
 //                    objRoom.UpdateRoom(data, roomId);
-                Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, collectionName + " restored successfully", Toast.LENGTH_LONG).show();
             }
         });
     }

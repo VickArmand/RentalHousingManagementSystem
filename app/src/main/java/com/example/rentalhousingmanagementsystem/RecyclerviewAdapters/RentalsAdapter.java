@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rentalhousingmanagementsystem.MainActivity;
 import com.example.rentalhousingmanagementsystem.R;
+import com.example.rentalhousingmanagementsystem.Rental_details;
 import com.example.rentalhousingmanagementsystem.models.Rentals;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.RentalsCrud;
 import com.example.rentalhousingmanagementsystem.rentalUpdate;
@@ -58,6 +59,14 @@ public class RentalsAdapter extends RecyclerView.Adapter<RentalsViewHolder> impl
     @Override
     public void onBindViewHolder(@NonNull RentalsViewHolder holder, int position) {
         Rentals rental = rentals.get(position);
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, Rental_details.class);
+                intent.putExtra("rentalID", rental.getId());
+                context.startActivity(intent);
+            }
+        });
         holder.name.setText(rental.getName());
         holder.numRooms.setText(String.valueOf(rental.getNumber_of_rooms()));
         holder.updateRental.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +126,7 @@ public class RentalsAdapter extends RecyclerView.Adapter<RentalsViewHolder> impl
                     try {
                         rental.setUpdated_at();
                     } catch (ParseException e) {
-                        throw new RuntimeException(e);
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
                     }
                     HashMap<String, Object> data = new HashMap<String, Object>();
                     data.put("name", Objects.requireNonNull(rental.getName()));

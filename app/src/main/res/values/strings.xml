@@ -67,4 +67,27 @@
     <string name="_10">10</string>
     <string name="title_activity_rental_update">rentalUpdate</string>
     <string name="update_rental">UPDATE RENTAL</string>
+    <string name="title_activity_rental_details">Rental_details</string>
+    <string name="tab_text_1">Tenants</string>
+    <string name="tab_text_2">Rooms</string>
+    <string name="tab_text_3">Caretakers</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="transactionCategory">
+        <item>Rent</item>
+        <item>Maintenance</item>
+        <item>Rent</item>
+    </string-array>
+    <string-array name="transactionMode">
+        <item>Bank</item>
+        <item>Cash</item>
+    </string-array>
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string-array name="rooms">
+        <item>N/A</item>
+    </string-array>
+
 </resources>

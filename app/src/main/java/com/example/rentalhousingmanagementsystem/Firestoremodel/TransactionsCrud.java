@@ -1,24 +1,36 @@
 package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rentalhousingmanagementsystem.RecyclerviewAdapters.TransactionsAdapter;
+import com.example.rentalhousingmanagementsystem.models.Transactions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class TransactionsCrud extends DbConn{
     private final String collectionName = "Transactions";
-    private final String [] fields = {"room_id", "credit", "debit", "tenant_id", "payment_mode", "evidence", "status", "created_at", "created_by", "updated_at", "updated_by"};
+    private final String [] fields = {"category", "room_id", "credit", "debit", "tenant_id", "payment_mode", "payment_date", "evidence", "status", "created_at", "created_by", "updated_at", "updated_by"};
     private Context context;
     private final String [] status = {"Fully Paid", "Partially Paid", "Not Paid"};
     public TransactionsCrud (Context context)
@@ -26,7 +38,7 @@ public class TransactionsCrud extends DbConn{
         this.context = context;
     }
 
-    public void RegisterTransaction(HashMap<String, String> data){
+    public void RegisterTransaction(HashMap<String, Object> data){
         db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -39,17 +51,55 @@ public class TransactionsCrud extends DbConn{
             }
         });
     }
-    public ArrayList<DocumentSnapshot> AllTransactions(String tenantID){
-        ArrayList<DocumentSnapshot> data = new ArrayList<DocumentSnapshot>();
-        Task<QuerySnapshot> transactions = db.collection(collectionName).whereEqualTo("tenant_id", tenantID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    public void AllTransactions(RecyclerView rv, ProgressDialog pd, String tenantID){
+        pd.setCancelable(false);
+        pd.setMessage("Fetching Data ...");
+        pd.show();
+        db.collection(collectionName).whereEqualTo("tenant_id", tenantID).orderBy("created_at", Query.Direction.ASCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    data.addAll(task.getResult().getDocuments());
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                ArrayList<Transactions> data = new ArrayList<>();
+                if (!value.isEmpty()) {
+                    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    for (DocumentSnapshot d : value.getDocuments()) {
+                        String category = (String) d.get(fields[0]);
+                        String roomId = (String) d.get(fields[1]);
+                        String paymentMode = (String) d.get(fields[5]);
+                        String evidence = (String) d.get(fields[7]);
+                        int credit = Integer.parseInt(String.valueOf(d.get(fields[2])));
+                        int debit = Integer.parseInt(String.valueOf(d.get(fields[3])));
+                        String tenant_id = (String) d.get(fields[4]);
+                        String rental_id = (String) d.get("rental_id");
+                        String paymentStatus = (String) d.get(fields[8]);
+                        Date paymentDate = null;
+                        try {
+                            paymentDate = dateFormat.parse(dateFormat.format(d.get(fields[6])));
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        String creator = (String) d.get(fields[10]);
+                        String updator = (String) d.get(fields[12]);
+                        try {
+                            Transactions transaction = new Transactions(category, rental_id, roomId, credit, debit, paymentMode, evidence, tenant_id, paymentStatus, creator, updator, paymentDate);
+                            transaction.setId(d.getId());
+                            data.add(transaction);
+                        } catch (ParseException e) {
+                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
+                        }
+                    }
                 }
+                if (data.size() > 0) {
+                    rv.setVisibility(View.VISIBLE);
+                    TransactionsAdapter rad = new TransactionsAdapter(context, data);
+                    rv.setAdapter(rad);
+                    rad.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "No " + collectionName + " available", Toast.LENGTH_SHORT).show();
+                    rv.setVisibility(View.GONE);
+                }
+                pd.dismiss();
             }
-        });
-        return data;
+    });
     }
     public HashMap<String, Object> GetTransaction(String documentID)
     {
@@ -71,15 +121,17 @@ public class TransactionsCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateTransaction(HashMap<String, String> data, String documentID)
+    public void UpdateTransaction(HashMap<String, Object> data, String documentID)
     {
         DocumentReference transaction = db.collection(collectionName).document(documentID);
-        if (transaction.get().getResult().exists()) {
-            for (String f : fields) {
-                if (data.get(f) != null)
-                    transaction.update(f, data.get(f));
-            }
-        }
-        Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+        transaction.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if (task.getResult().exists())
+                transaction.update(data);
+            else
+                Toast.makeText(context, collectionName + " doesn't exist", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+        }});
     }
 }

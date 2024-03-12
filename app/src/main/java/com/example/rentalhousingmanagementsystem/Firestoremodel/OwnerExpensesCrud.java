@@ -1,19 +1,29 @@
 package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rentalhousingmanagementsystem.RecyclerviewAdapters.OwnerExpensesAdapter;
+import com.example.rentalhousingmanagementsystem.models.OwnerExpenses;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class OwnerExpensesCrud extends DbConn{
@@ -25,7 +35,7 @@ public class OwnerExpensesCrud extends DbConn{
         this.context = context;
     }
 
-    public void RegisterOwnerExpense(HashMap<String, String> data){
+    public void RegisterOwnerExpense(HashMap<String, Object> data){
         db.collection(collectionName).add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
@@ -38,17 +48,44 @@ public class OwnerExpensesCrud extends DbConn{
             }
         });
     }
-    public ArrayList<DocumentSnapshot> AllOwnerExpenses(){
-        ArrayList<DocumentSnapshot> data = new ArrayList<DocumentSnapshot>();
-        Task<QuerySnapshot> ownerExpenses = db.collection(collectionName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    public void AllOwnerExpenses(RecyclerView rv, ProgressDialog pd){
+        pd.setCancelable(false);
+        pd.setMessage("Fetching Data ...");
+        pd.show();
+        db.collection(collectionName).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    data.addAll(task.getResult().getDocuments());
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                ArrayList<OwnerExpenses> data = new ArrayList<>();
+                if (!value.isEmpty()) {
+                    for (DocumentSnapshot d : value.getDocuments()) {
+                        String category = (String) d.get(fields[0]);
+                        String description = (String) d.get(fields[1]);
+                        String frequency = (String) d.get(fields[2]);
+                        int amount = Integer.parseInt(String.valueOf(d.get(fields[3])));
+                        Date deadline = (Date) d.get(fields[4]);
+                        String creator = (String) d.get(fields[6]);
+                        String updator = (String) d.get(fields[8]);
+                        try {
+                            OwnerExpenses ownerExpense = new OwnerExpenses(category, amount, description, frequency, deadline, creator, updator);
+                            ownerExpense.setId(d.getId());
+                            data.add(ownerExpense);
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
+                if (data.size() > 0) {
+                    rv.setVisibility(View.VISIBLE);
+                    OwnerExpensesAdapter rad = new OwnerExpensesAdapter(context, data);
+                    rv.setAdapter(rad);
+                    rad.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "No "+collectionName+" available", Toast.LENGTH_SHORT).show();
+                    rv.setVisibility(View.GONE);
+                }
+                pd.dismiss();
             }
         });
-        return data;
     }
     public HashMap<String, Object> GetOwnerExpense(String documentID)
     {
@@ -70,16 +107,18 @@ public class OwnerExpensesCrud extends DbConn{
         });
         return data;
     }
-    public void UpdateOwnerExpense(HashMap<String, String> data, String documentID)
+    public void UpdateOwnerExpense(HashMap<String, Object> data, String documentID)
     {
         DocumentReference ownerExpense = db.collection(collectionName).document(documentID);
-        if (ownerExpense.get().getResult().exists()) {
-            for (String f : fields) {
-                if (data.get(f) != null)
-                    ownerExpense.update(f, data.get(f));
-            }
-        }
-        Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+        ownerExpense.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if (task.getResult().exists())
+                ownerExpense.update(data);
+            else
+                Toast.makeText(context, collectionName + " doesn't exist", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+        }});
     }
     public void DeleteOwnerExpense(String documentID)
     {

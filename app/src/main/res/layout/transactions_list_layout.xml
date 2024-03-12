@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="2dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="82dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txtview1"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textStyle="bold">
+            </TextView>
+
+            <TextView
+                android:id="@+id/txtrental"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtview1"
+                android:text="Payment Date"
+                android:textStyle="bold">
+            </TextView>
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtrental"
+                android:text="Amount"
+                android:textStyle="bold">
+            </TextView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp">
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Rent">
+            </TextView>
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/shalom_house"
+                android:layout_below="@id/category">
+            </TextView>
+
+            <TextView
+                android:id="@+id/credit"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/date"
+                android:text="@string/_10">
+            </TextView>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/btnupdate"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="15dp"
+            android:src="@drawable/updatebtn">
+        </ImageView>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

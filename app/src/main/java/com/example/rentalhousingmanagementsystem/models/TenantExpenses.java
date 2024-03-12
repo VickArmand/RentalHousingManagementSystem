@@ -1,14 +1,16 @@
 package com.example.rentalhousingmanagementsystem.models;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TenantExpenses {
-    private final String [] fields = {"category", "description", "payer", "frequency", "amount", "tenant_id", "deadline", "created_at", "created_by", "updated_at", "updated_by"};
-    private String category, payer, tenant_id, description, frequency, deadline, created_at, created_by, updated_at, updated_by;
+    private String id, category, payer, tenant_id, description, frequency, created_by, updated_by;
     private int amount;
-    public TenantExpenses(String category, String payer, int amount, String tenant_id, String description, String frequency, String deadline, String created_by, String updated_by)
-    {
+    private final String format = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private Date created_at, updated_at, deadline;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+    public TenantExpenses(String category, String payer, int amount, String tenant_id, String description, String frequency, Date deadline, String created_by, String updated_by) throws ParseException {
         this.category = category;
         this.amount = amount;
         this.tenant_id = tenant_id;
@@ -18,11 +20,35 @@ public class TenantExpenses {
         this.payer = payer;
         this.created_by = created_by;
         this.updated_by = updated_by;
-        this.created_at = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
-        this.updated_at = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+        this.created_at = dateFormat.parse(dateFormat.format(new Date()));
+        this.updated_at = dateFormat.parse(dateFormat.format(new Date()));
     }
 
-    public String getDeadline() {
+    public String getId() {
+        return id;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setPayer(String payer) {
+        this.payer = payer;
+    }
+
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Date getDeadline() {
         return deadline;
     }
 
@@ -50,6 +76,14 @@ public class TenantExpenses {
         return updated_by;
     }
 
+    public void setTenant_id(String tenant_id) {
+        this.tenant_id = tenant_id;
+    }
+
+    public String getTenant_id() {
+        return tenant_id;
+    }
+
     public void setFrequency(String frequency) {
         this.frequency = frequency;
     }
@@ -62,10 +96,10 @@ public class TenantExpenses {
         this.description = description;
     }
 
-    public void setDeadline(String deadline) {
+    public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
-    public void setUpdated_at() {
-        this.updated_at =new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+    public void setUpdated_at() throws ParseException {
+        this.updated_at = dateFormat.parse(dateFormat.format(new Date()));
     }
 }

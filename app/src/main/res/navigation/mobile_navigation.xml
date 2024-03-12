@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/nav_all_rentals"
-        android:name="com.example.rentalhousingmanagementsystem.ui.rentals.AllRentalsFragment"
+        android:name="com.example.rentalhousingmanagementsystem.ui.fragments.AllRentalsFragment"
         android:label="@string/all_rentals"
         tools:layout="@layout/fragment_allrentals" />
 
     <fragment
         android:id="@+id/nav_new_rental"
-        android:name="com.example.rentalhousingmanagementsystem.ui.rentals.NewRentalFragment"
+        android:name="com.example.rentalhousingmanagementsystem.ui.fragments.NewRentalFragment"
         android:label="@string/menu_new_rental"
         tools:layout="@layout/fragment_newrental" />
 </navigation>

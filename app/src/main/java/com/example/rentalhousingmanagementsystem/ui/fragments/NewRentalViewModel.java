@@ -1,16 +1,16 @@
-package com.example.rentalhousingmanagementsystem.ui.rentals;
+package com.example.rentalhousingmanagementsystem.ui.fragments;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class AllRentalsViewModel extends ViewModel {
+public class NewRentalViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public AllRentalsViewModel() {
+    public NewRentalViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is gallery fragment");
     }
 
     public LiveData<String> getText() {

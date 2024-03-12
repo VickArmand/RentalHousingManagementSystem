@@ -1,18 +1,27 @@
 package com.example.rentalhousingmanagementsystem.Firestoremodel;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.rentalhousingmanagementsystem.RecyclerviewAdapters.RoomsAdapter;
+import com.example.rentalhousingmanagementsystem.models.Rooms;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,7 +35,7 @@ public class RoomsCrud extends DbConn{
     {
         this.context = context;
     }
-    public void RegisterRoom(HashMap<String, String>  data){
+    public void RegisterRoom(HashMap<String, Object>  data){
         // Status must be Open
         if (RoomExists(data))
             Toast.makeText(context.getApplicationContext(), "Room Exists", Toast.LENGTH_SHORT).show();
@@ -44,21 +53,54 @@ public class RoomsCrud extends DbConn{
             });
         }
     }
-    public ArrayList<DocumentSnapshot> AllRooms(String Rental_id){
-        ArrayList<DocumentSnapshot> data = new ArrayList<>();
-        Task<QuerySnapshot> rooms = db.collection(collectionName).whereEqualTo("rental_id", Rental_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    public void AllRooms(RecyclerView rv, ProgressDialog pd, String Rental_id){
+        pd.setCancelable(false);
+        pd.setMessage("Fetching Data ...");
+        pd.show();
+         db.collection(collectionName).whereEqualTo("rental_id", Rental_id).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    data.addAll(task.getResult().getDocuments());
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                ArrayList<Rooms> data = new ArrayList<>() ;
+                if (!value.isEmpty())
+                {
+                    for (DocumentSnapshot d : value.getDocuments())
+                    {
+                        String name = (String) d.get(fields[0]);
+                        int cost = Integer.parseInt((String.valueOf(d.get(fields[1]))));
+                        int tenants = Integer.parseInt((String.valueOf(d.get(fields[3]))));
+                        String description = (String) d.get(fields[2]);
+                        String status = (String) d.get(fields[2]);
+                        String rental_id = (String) d.get(fields[5]);
+                        String creator = (String) d.get(fields[7]);
+                        String updator = (String) d.get(fields[9]);
+                        try {
+                            Rooms room = new Rooms(name, cost, description, tenants, status, rental_id, creator, updator);
+                            room.setId(d.getId());
+                            data.add(room);
+                        } catch (ParseException e) {
+                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
+                if (data.size() > 0)
+                {
+                    rv.setVisibility(View.VISIBLE);
+                    RoomsAdapter rad = new RoomsAdapter(context, data);
+                    rv.setAdapter(rad);
+                    rad.notifyDataSetChanged();
+                }
+                else
+                {
+                    Toast.makeText(context, "No "+collectionName+" available", Toast.LENGTH_SHORT).show();
+                    rv.setVisibility(View.GONE);
+                }
+                pd.dismiss();
             }
         });
-        return data;
     }
-    public HashMap<String, Object> GetRoom(String documentID)
+    public DocumentSnapshot GetRoom(String documentID)
     {
-        HashMap<String, Object> data = new HashMap<String, Object>();
+        final DocumentSnapshot[] data = new DocumentSnapshot[1];
         DocumentReference room = db.collection(collectionName).document(documentID);
         room.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -67,37 +109,44 @@ public class RoomsCrud extends DbConn{
                 {
                     DocumentSnapshot doc = task.getResult();
                     if (doc.exists()) {
-                        for (String f : fields) {
-                            data.put(f, doc.get(f));
-                        }
+                        data[0] = doc;
                     }
                 }
             }
         });
-        return data;
+        return data[0];
     }
-    public Boolean RoomExists (HashMap<String, String> data){
+    public Boolean RoomExists (HashMap<String, Object> data){
         final boolean[] recordExists = {false};
-        ArrayList<DocumentSnapshot> rooms = AllRooms(data.get(uniqueFields[1]));
-        for (DocumentSnapshot room: rooms)
-        {
-            if (recordExists[0])
-                break;
-            if (room.get(uniqueFields[0]) == data.get(uniqueFields[0]))
-                recordExists[0] = true;
-        }
+        db.collection(collectionName).whereEqualTo(uniqueFields[1], data.get(uniqueFields[1])).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (DocumentSnapshot room: task.getResult().getDocuments())
+                    {
+                        if (recordExists[0])
+                            break;
+                        if (room.get(uniqueFields[0]) == data.get(uniqueFields[0]))
+                            recordExists[0] = true;
+                    }
+                }
+            }
+        });
+
         return recordExists[0];
     }
-    public void UpdateRoom(HashMap<String, String> data, String documentID)
+    public void UpdateRoom(HashMap<String, Object> data, String documentID)
     {
         DocumentReference room = db.collection(collectionName).document(documentID);
-        if (room.get().getResult().exists()) {
-            for (String f : fields) {
-                if (data.get(f) != null)
-                    room.update(f, data.get(f));
-            }
-        }
-        Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+        room.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        @Override
+        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if (task.getResult().exists())
+                room.update(data);
+            else
+                Toast.makeText(context, collectionName + " doesn't exist", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, collectionName + " updated successfully", Toast.LENGTH_LONG).show();
+        }});
     }
     public void DeleteRoom(String documentID)
     {
@@ -107,6 +156,17 @@ public class RoomsCrud extends DbConn{
             @Override
             public void onSuccess(Void avoid) {
                 Toast.makeText(context, collectionName + " deleted successfully", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void RestoreRoom(String documentID)
+    {
+        // Status must be Vacant
+        DocumentReference room = db.collection(collectionName).document(documentID);
+        room.update("status", status[0]).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void avoid) {
+                Toast.makeText(context, collectionName + " restored successfully", Toast.LENGTH_LONG).show();
             }
         });
     }

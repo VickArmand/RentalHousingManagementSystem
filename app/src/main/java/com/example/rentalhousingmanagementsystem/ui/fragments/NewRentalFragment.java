@@ -1,4 +1,4 @@
-package com.example.rentalhousingmanagementsystem.ui.rentals;
+package com.example.rentalhousingmanagementsystem.ui.fragments;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,10 +11,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentNewrentalBinding;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.RentalsCrud;
+import com.example.rentalhousingmanagementsystem.models.Rentals;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class NewRentalFragment extends Fragment {
 
@@ -40,10 +47,20 @@ private FragmentNewrentalBinding binding;
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        HashMap<String, String> data = new HashMap<String, String>();
-                        data.put("name", name);
-                        data.put("number_of_rooms", numRooms);
-                        new RentalsCrud(getContext()).RegisterRental(data);
+                        String user = Auth.getCurrentUser().getEmail();
+                        Rentals rental;
+                        try {
+                            rental = new Rentals(name, Integer.parseInt(numRooms), "Open", user, user);
+                            HashMap<String, Object> data = new HashMap<String, Object>();
+                            data.put("name", Objects.requireNonNull(rental.getName()));
+                            data.put("number_of_rooms", Objects.requireNonNull(rental.getNumber_of_rooms()));
+                            data.put("status", Objects.requireNonNull(rental.getStatus()));
+                            data.put("created_at", Objects.requireNonNull(rental.getCreated_at()));
+                            data.put("updated_at", Objects.requireNonNull(rental.getUpdated_at()));
+                            new RentalsCrud(getContext()).RegisterRental(data);
+                        } catch (ParseException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG);
+                        }
                     }
                 });
                 t.start();
