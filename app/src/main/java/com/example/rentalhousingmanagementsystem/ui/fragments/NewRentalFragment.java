@@ -16,6 +16,7 @@ import com.example.rentalhousingmanagementsystem.Firestoremodel.Auth;
 import com.example.rentalhousingmanagementsystem.databinding.FragmentNewrentalBinding;
 import com.example.rentalhousingmanagementsystem.Firestoremodel.RentalsCrud;
 import com.example.rentalhousingmanagementsystem.models.Rentals;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,7 +48,7 @@ private FragmentNewrentalBinding binding;
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String user = Auth.getCurrentUser().getEmail();
+                        String user = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                         Rentals rental;
                         try {
                             rental = new Rentals(name, Integer.parseInt(numRooms), "Open", user, user);

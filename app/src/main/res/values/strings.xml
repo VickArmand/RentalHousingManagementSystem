@@ -76,7 +76,7 @@
     <string-array name="transactionCategory">
         <item>Rent</item>
         <item>Maintenance</item>
-        <item>Rent</item>
+        <item>Miscellaneous</item>
     </string-array>
     <string-array name="transactionMode">
         <item>Bank</item>

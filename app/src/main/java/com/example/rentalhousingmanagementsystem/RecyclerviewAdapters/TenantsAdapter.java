@@ -9,11 +9,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,21 +34,26 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class TenantsAdapter extends RecyclerView.Adapter<TenantsViewHolder> implements Filterable {
     private final Context context;
     private final ArrayList<Tenants> tenants;
     private TenantsCrud objTenants;
+    private final String rental_ID;
 
-    public TenantsAdapter(Context context, ArrayList<Tenants> tenants)
+    public TenantsAdapter(Context context, ArrayList<Tenants> tenants, String rental_ID)
     {
         this.context = context;
         this.tenants = tenants;
+        this.rental_ID = rental_ID;
         objTenants = new TenantsCrud(context);
     }
 
@@ -110,13 +117,37 @@ public class TenantsAdapter extends RecyclerView.Adapter<TenantsViewHolder> impl
         EditText tenantContact = subview.findViewById(R.id.txtcontact);
         EditText tenantID = subview.findViewById(R.id.txtnationalID);
         EditText tenantEmail = subview.findViewById(R.id.txtemail);
-        EditText tenantRoom = subview.findViewById(R.id.txtroom);
+        Spinner tenantRoom = subview.findViewById(R.id.txtroom);
         EditText tenantEContact = subview.findViewById(R.id.txtecontact);
+        HashMap<String, String > data = new HashMap<>();
+        List<String> val = new ArrayList<>();
+        new DbConn().db.collection("Rooms").whereEqualTo("rental_id", rental_ID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                QuerySnapshot value = task.getResult();
+                if (!value.isEmpty())
+                {
+                    for (DocumentSnapshot d : value.getDocuments()) {
+                        data.put((String) d.get("name"), d.getId());
+                        val.add((String) d.get("name"));
+                    }
+                    ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, val);
+                    roomAdapter.setDropDownViewResource(android.R.layout.select_dialog_item);
+                    tenantRoom.setAdapter(roomAdapter);
+                    for (Map.Entry<String, String> entry: data.entrySet())
+                    {
+                        if (Objects.equals(entry.getValue(), tenant.getRoom_id())) {
+                            if (tenant != null)
+                                tenantRoom.setSelection(val.indexOf(entry.getKey()));
+                        }
+                    }
+                }
+            }
+        });
         if (tenant != null)
         {
             tenantContact.setText(tenant.getContact());
             tenantID.setText(tenant.getNationalID());
-            tenantRoom.setText(tenant.getRoom_id());
             tenantEmail.setText(tenant.getEmail());
             tenantEContact.setText(tenant.getEmergencyContact());
         }
@@ -129,7 +160,7 @@ public class TenantsAdapter extends RecyclerView.Adapter<TenantsViewHolder> impl
             public void onClick(DialogInterface dialog, int which) {
                 String contact = tenantContact.getText().toString();
                 String email = tenantEmail.getText().toString();
-                String room = tenantRoom.getText().toString();
+                String room = data.get(tenantRoom.getSelectedItem().toString());
                 String eContact = tenantEContact.getText().toString();
                 String nationalID = tenantID.getText().toString();
                 if (TextUtils.isEmpty(contact) || TextUtils.isEmpty(email)|| TextUtils.isEmpty(room)|| TextUtils.isEmpty(eContact)|| TextUtils.isEmpty(nationalID))

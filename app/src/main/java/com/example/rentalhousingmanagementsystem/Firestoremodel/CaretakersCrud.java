@@ -88,7 +88,7 @@ public class CaretakersCrud extends DbConn{
                 }
                 if (data.size() > 0) {
                     rv.setVisibility(View.VISIBLE);
-                    CaretakersAdapter rad = new CaretakersAdapter(context, data);
+                    CaretakersAdapter rad = new CaretakersAdapter(context, data, Rental_id);
                     rv.setAdapter(rad);
                     rad.notifyDataSetChanged();
                 } else {

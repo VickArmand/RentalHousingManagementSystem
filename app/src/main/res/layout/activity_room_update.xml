@@ -4,25 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="50dp"
+    android:padding="20dp"
     tools:context=".rentalUpdate">
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:padding="10dp">
+        android:layout_height="80dp"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="101dp"
-            android:layout_height="31dp"
+            android:layout_height="21dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="-13dp"
-            android:layout_marginBottom="56dp"
+            android:layout_marginBottom="26dp"
             android:text="Cost"
             android:textColor="@color/navy_blue"
             android:textStyle="bold">
@@ -32,9 +30,10 @@
         <EditText
             android:id="@+id/txtcost"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="35dp"
             android:layout_marginEnd="0dp"
             android:ems="10"
@@ -42,22 +41,20 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:layout_gravity="center"
-        android:padding="10dp">
+        >
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="127dp"
-            android:layout_height="28dp"
+            android:layout_height="18dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="-124dp"
-            android:layout_marginBottom="58dp"
-            android:layout_toStartOf="@+id/txtdescription"
+            android:layout_marginBottom="18dp"
             android:text="Description"
             android:textColor="@color/navy_blue"
             android:textStyle="bold">
@@ -68,31 +65,27 @@
             android:id="@+id/txtdescription"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="22dp"
             android:layout_marginEnd="-2dp"
             android:ems="10"
             android:inputType="textLongMessage" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:padding="10dp">
+        android:layout_height="60dp"
+        android:layout_gravity="center">
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="127dp"
-            android:layout_height="28dp"
+            android:layout_height="18dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="-124dp"
-            android:layout_marginBottom="58dp"
-            android:layout_toStartOf="@+id/txttenants"
             android:text="Maximum tenants"
             android:textColor="@color/navy_blue"
             android:textStyle="bold">
@@ -103,9 +96,8 @@
             android:id="@+id/txttenants"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="42dp"
             android:layout_marginEnd="-2dp"
             android:ems="10"
             android:inputType="number" />

@@ -89,7 +89,7 @@ public class TenantsCrud extends DbConn{
                 }
                 if (data.size() > 0) {
                     rv.setVisibility(View.VISIBLE);
-                    TenantsAdapter rad = new TenantsAdapter(context, data);
+                    TenantsAdapter rad = new TenantsAdapter(context, data, Rental_id);
                     rv.setAdapter(rad);
                     rad.notifyDataSetChanged();
                 }

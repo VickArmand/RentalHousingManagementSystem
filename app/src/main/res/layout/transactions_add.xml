@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="50dp"
+    android:padding="20dp"
     tools:context=".rentalUpdate">
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -18,7 +18,6 @@
             android:layout_height="28dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="-124dp"
@@ -36,6 +35,7 @@
             android:layout_height="30dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="35dp"
             android:layout_marginEnd="-2dp"
             android:ems="10" />
@@ -52,7 +52,7 @@
             android:layout_height="28dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
+            
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="-124dp"
@@ -70,6 +70,7 @@
             android:layout_height="30dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="35dp"
             android:layout_marginEnd="-2dp"
             android:ems="10" />
@@ -86,11 +87,11 @@
             android:layout_height="28dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
+            
             android:layout_marginStart="7dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="-124dp"
-            android:layout_marginBottom="58dp"
+            android:layout_marginBottom="18dp"
             android:layout_toStartOf="@+id/txtamount"
             android:text="Amount"
             android:textColor="@color/navy_blue"
@@ -101,10 +102,11 @@
         <EditText
             android:id="@+id/txtamount"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="42dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="22dp"
             android:layout_marginEnd="-2dp"
             android:ems="10"
             android:inputType="number" />
@@ -118,10 +120,10 @@
         <TextView
             android:id="@+id/textView6"
             android:layout_width="178dp"
-            android:layout_height="26dp"
+            android:layout_height="22dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
+            
             android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="-123dp"
@@ -133,21 +135,25 @@
 
         </TextView>
 
-        <DatePicker
+
+        <EditText
             android:id="@+id/txtdeadline"
-            android:layout_width="241dp"
-            android:layout_height="48dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="22dp"
             android:layout_marginEnd="-2dp"
             android:layout_marginBottom="0dp"
-            android:ems="10" />
+            android:focusable="false"
+            android:ems="10"
+            android:inputType="date" />
     </RelativeLayout>
     <Button
+        android:id="@+id/btnuploadimage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="UPLOAD IMAGE"
-        android:backgroundTint="@color/navy_blue"
-        />
+        android:backgroundTint="@color/navy_blue" />
 </LinearLayout>
