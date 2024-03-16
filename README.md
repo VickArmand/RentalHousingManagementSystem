@@ -7,13 +7,13 @@
 </ul>
 
 ## Blog Article
-<button href="https://vickarmand.github.io">CLICK HERE</button>
+<a href="https://vickarmand.github.io">CLICK HERE</a>
 
 ## Installation
 
 ## Usage
-<ul>
 For a new owner you need to:
+<ul>
 <li>create the rentals first</li>
 <li>in the rentals created add rooms</li>
 <li>add tenants and caretakers while assigning them the available rooms</li>
