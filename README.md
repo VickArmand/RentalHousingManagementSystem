@@ -3,13 +3,14 @@
 
 ### Authors
 <ul>
-<li>Victor Maina</li>
+<li>VickArmand</li>
 </ul>
 
 ## Blog Article
 <a href="https://vickarmand.github.io">CLICK HERE</a>
 
 ## Installation
+<p>It is an Android application, though it hasnt being uploaded to Play Store</p>
 
 ## Usage
 For a new owner you need to:
@@ -21,7 +22,9 @@ For a new owner you need to:
 </ul>
 
 ## Contributing
-
-## Related Projects
+<ul>
+<li>VickArmand</li>
+</ul>
 
 ## Licensing
+<p>Feel free to use software for free</p>
