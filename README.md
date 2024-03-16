@@ -14,10 +14,10 @@
 ## Usage
 For a new owner you need to:
 <ul>
-<li>create the rentals first</li>
-<li>in the rentals created add rooms</li>
-<li>add tenants and caretakers while assigning them the available rooms</li>
-<li>in the available tenants add some payments that they have transacted, whether its water, electricity, rent or maintenance bills</li>
+<li>create the rentals first by clicking the naviation menu and selecting the <b>Add rental</b> option <img src="screenshots/Screenshot_rentals.jpg"></img><img src="screenshots/Screenshot_addrental.jpg"></img></li>
+<li>in the rentals created add rooms by clicking the floating add icon on the bottom<img src="screenshots/Screenshot_rooms.jpg"></img></li>
+<li>add tenants and caretakers while assigning them the available rooms by clicking the floating add icon on the bottom<img src="screenshots/Screenshot_tenants.jpg"></img></li>
+<li>in the available tenants add some payments that they have transacted, whether its water, electricity, rent or maintenance bills by clicking the floating add icon on the bottom<img src="screenshots/Screenshot_transactions.jpg"></img></li>
 </ul>
 
 ## Contributing
