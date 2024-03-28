@@ -6,9 +6,6 @@
 <li>VickArmand</li>
 </ul>
 
-## Blog Article
-<a href="https://vickarmand.github.io">CLICK HERE</a>
-
 ## Installation
 <p>It is an Android application, though it hasnt being uploaded to Play Store</p>
 
